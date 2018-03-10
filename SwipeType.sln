@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwipeType", "SwipeType\Swip
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwipeType.Example", "SwipeType.Example\SwipeType.Example.csproj", "{F3D2E6BA-F712-4B75-9A73-824648119D0F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwipeTest.Tests", "SwipeTest.Tests\SwipeTest.Tests.csproj", "{C923D046-FC58-4A5A-8FE8-8E50F334FBA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F3D2E6BA-F712-4B75-9A73-824648119D0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3D2E6BA-F712-4B75-9A73-824648119D0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3D2E6BA-F712-4B75-9A73-824648119D0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C923D046-FC58-4A5A-8FE8-8E50F334FBA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C923D046-FC58-4A5A-8FE8-8E50F334FBA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C923D046-FC58-4A5A-8FE8-8E50F334FBA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C923D046-FC58-4A5A-8FE8-8E50F334FBA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
