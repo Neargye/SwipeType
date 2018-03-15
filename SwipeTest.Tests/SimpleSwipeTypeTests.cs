@@ -18,11 +18,11 @@ namespace SwipeTest.Tests
             }
             catch (OutOfMemoryException e)
             {
-                Assert.Fail("GetSuggestionTest fail with OutOfMemoryException: " + e);
+                Assert.Fail($"GetSuggestionTest fail with OutOfMemoryException: {e}");
             }
             catch (Exception ex)
             {
-                Assert.Fail("GetSuggestionTest fail with Exception: " + ex);
+                Assert.Fail($"GetSuggestionTest fail with Exception: {ex}");
             }
         }
 
@@ -88,7 +88,7 @@ namespace SwipeTest.Tests
                 {
                     foreach (var x in swype.GetSuggestion(s.Key))
                         if (!s.Value.Remove(x))
-                            Console.WriteLine("New match: " + x);
+                            Console.WriteLine($"New match: {x}");
                 }
 
                 foreach (var s in testing)
@@ -97,7 +97,7 @@ namespace SwipeTest.Tests
             }
             catch (Exception ex)
             {
-                Assert.Fail("GetSuggestionTest fail with exception: " + ex);
+                Assert.Fail($"GetSuggestionTest fail with exception: {ex}");
             }
         }
     }

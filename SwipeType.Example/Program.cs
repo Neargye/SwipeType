@@ -28,7 +28,7 @@ namespace SwipeType.Example
                 for (var i = 0; i < result.Length; i++)
                 {
                     var x = result[i];
-                    Console.WriteLine("match " + (i + 1) + ": " + x);
+                    Console.WriteLine($"match {i + 1}: {x}");
                 }
             }
             Console.ReadKey(true);
