@@ -53,6 +53,7 @@ namespace SwipeType
                 .Where(x => (!string.IsNullOrEmpty(x)) && (x[0] == inputStr[0]) && (x[x.Length > 0 ? x.Length - 1 : 0] == inputStr[inputStr.Length > 0 ? inputStr.Length - 1 : 0]))
                 .Where(x => Match(inputStr, x))
                 .Where(x => x.Length > GetMinimumWordlength(inputStr))
+                .OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(inputStr, x))
                 .ToArray();
         }
 
@@ -71,6 +72,7 @@ namespace SwipeType
                 if (i == word.Length)
                     return true;
             }
+
             return i == word.Length;
         }
 
@@ -100,7 +102,7 @@ namespace SwipeType
             if (sequence == null || sequence.Length == 0)
                 return new StringBuilder();
 
-            StringBuilder s = new StringBuilder();
+            var s = new StringBuilder();
             s.Append(sequence[0]);
 
             for (int i = 1; i < sequence.Length; ++i)
@@ -119,11 +121,11 @@ namespace SwipeType
         /// <returns></returns>
         private int GetMinimumWordlength(string path)
         {
-            StringBuilder rowNumbers = new StringBuilder();
+            var rowNumbers = new StringBuilder();
             foreach (char inChar in path)
                 rowNumbers.Append(GetKeyboardRow(inChar));
 
-            StringBuilder compressedRowNumbers = Compress(rowNumbers);
+            var compressedRowNumbers = Compress(rowNumbers);
             return compressedRowNumbers.Length - 3;
         }
     }
