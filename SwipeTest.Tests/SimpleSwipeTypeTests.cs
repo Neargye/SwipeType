@@ -28,7 +28,7 @@ namespace SwipeTest.Tests
         {
             try
             {
-                SwipeType.SwipeType swype = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+                SwipeType.SwipeType simpleSwipeType = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
             }
             catch (OutOfMemoryException e)
             {
@@ -45,7 +45,7 @@ namespace SwipeTest.Tests
         {
             try
             {
-                var swype = new SimpleSwipeType(File.ReadAllLines("FullEnglishDictionary.txt"));
+                SwipeType.SwipeType simpleSwipeType = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
                 var testing = new Dictionary<string, List<string>>
                 {
                     ["heqerqllo"] = new List<string>
@@ -100,7 +100,7 @@ namespace SwipeTest.Tests
 
                 foreach (var s in testing)
                 {
-                    foreach (var x in swype.GetSuggestion(s.Key))
+                    foreach (var x in simpleSwipeType.GetSuggestion(s.Key))
                         if (!s.Value.Remove(x))
                             Console.WriteLine($"New match: {x}");
                 }
