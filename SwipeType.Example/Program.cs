@@ -21,8 +21,6 @@ namespace SwipeType.Example
     {
         private static void Main()
         {
-            var swype = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
-            SwipeType swype = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
             SwipeType simpleSwipeType = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
             string[] testCases =
             {
@@ -40,7 +38,25 @@ namespace SwipeType.Example
             {
                 Console.WriteLine("#===============================#");
                 Console.WriteLine($"Raw string: {s}");
-                var result = swype.GetSuggestion(s);
+
+                var result = simpleSwipeType.GetSuggestion(s);
+
+                for (var i = 0; i < result.Length; i++)
+                {
+                    var x = result[i];
+                    Console.WriteLine($"match {i + 1}: {x}");
+                }
+            }
+            Console.ReadKey(true);
+
+            SwipeType distanceSwipeType = new DistanceSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+            foreach (var s in testCases)
+            {
+                Console.WriteLine("#===============================#");
+                Console.WriteLine($"Raw string: {s}");
+
+                var result = distanceSwipeType.GetSuggestion(s);
+
                 for (var i = 0; i < result.Length; i++)
                 {
                     var x = result[i];

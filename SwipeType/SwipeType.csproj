@@ -39,6 +39,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DistanceSwipeType.cs" />
     <Compile Include="SimpleSwipeType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SwipeType.cs" />
