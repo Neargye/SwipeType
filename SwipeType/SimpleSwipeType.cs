@@ -87,7 +87,7 @@ namespace SwipeType
                 if (KeyboardLayoutEnglish[i].Contains(c))
                     return i;
 
-            throw new ArgumentException($"The char should be of {KeyboardLayoutEnglish} layout type.");
+            throw new ArgumentException($"The char should be of {nameof(KeyboardLayoutEnglish)} layout type.");
         }
 
         /// <summary>
