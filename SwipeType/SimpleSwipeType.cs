@@ -21,7 +21,7 @@ namespace SwipeType
     /// <summary>
     ///     Simple SwipeType.
     /// </summary>
-    public class SimpleSwipeType
+    public class SimpleSwipeType : SwipeType
     {
         /// <summary>
         ///     Keyboard layout.
@@ -34,24 +34,16 @@ namespace SwipeType
         };
 
         /// <summary>
-        ///     Dictionary of words.
-        /// </summary>
-        public string[] Words { get; }
-
-        /// <summary>
         /// </summary>
         /// <param name="wordList">The dictionary of words.</param>
-        public SimpleSwipeType(string[] wordList)
-        {
-            Words = wordList;
-        }
+        public SimpleSwipeType(string[] wordList) : base(wordList) { }
 
         /// <summary>
         ///     Returns suggestions for a given inputStr.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public string[] GetSuggestion(string input)
+        public override string[] GetSuggestion(string input)
         {
             if (input == null)
                 throw new ArgumentNullException(nameof(input));

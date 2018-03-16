@@ -28,7 +28,7 @@ namespace SwipeTest.Tests
         {
             try
             {
-                var swype = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+                SwipeType.SwipeType swype = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
             }
             catch (OutOfMemoryException e)
             {

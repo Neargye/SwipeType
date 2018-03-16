@@ -22,6 +22,8 @@ namespace SwipeType.Example
         private static void Main()
         {
             var swype = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+            SwipeType swype = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+            SwipeType simpleSwipeType = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
             string[] testCases =
             {
                 "heqerqllo",
