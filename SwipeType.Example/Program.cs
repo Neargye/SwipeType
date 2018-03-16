@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace SwipeType.Example
@@ -22,6 +23,19 @@ namespace SwipeType.Example
         private static void Main()
         {
             SwipeType simpleSwipeType = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+            SampleUsingSwipeType(simpleSwipeType);
+            Console.ReadKey(true);
+
+            SwipeType distanceSwipeType = new DistanceSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+            SampleUsingSwipeType(distanceSwipeType);
+            Console.ReadKey(true);
+        }
+
+        private static void SampleUsingSwipeType(SwipeType swipeType)
+        {
+            Console.WriteLine($"Test {swipeType.GetType()}");
+
+            Stopwatch stopwatch = new Stopwatch();
             string[] testCases =
             {
                 "heqerqllo",
@@ -39,31 +53,19 @@ namespace SwipeType.Example
                 Console.WriteLine("#===============================#");
                 Console.WriteLine($"Raw string: {s}");
 
-                var result = simpleSwipeType.GetSuggestion(s);
+                stopwatch.Start();
+                var result = swipeType.GetSuggestion(s);
+                stopwatch.Stop();
+                Console.WriteLine($"Match time: {stopwatch.ElapsedMilliseconds} ms");
+                stopwatch.Reset();
 
-                for (var i = 0; i < result.Length; i++)
+                int length = result.Length;
+                for (int i = 0; i < length; ++i)
                 {
                     var x = result[i];
                     Console.WriteLine($"match {i + 1}: {x}");
                 }
             }
-            Console.ReadKey(true);
-
-            SwipeType distanceSwipeType = new DistanceSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
-            foreach (var s in testCases)
-            {
-                Console.WriteLine("#===============================#");
-                Console.WriteLine($"Raw string: {s}");
-
-                var result = distanceSwipeType.GetSuggestion(s);
-
-                for (var i = 0; i < result.Length; i++)
-                {
-                    var x = result[i];
-                    Console.WriteLine($"match {i + 1}: {x}");
-                }
-            }
-            Console.ReadKey(true);
         }
     }
 }
