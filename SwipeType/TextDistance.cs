@@ -16,7 +16,7 @@ using System;
 
 namespace SwipeType
 {
-    internal class TextDistance
+    internal static class TextDistance
     {
         // Determine the Damerau-Levensh distance between source and target
         internal static int GetDamerauLevenshteinDistance(string source, string target)

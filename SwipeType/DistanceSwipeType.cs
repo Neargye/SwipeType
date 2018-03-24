@@ -18,7 +18,7 @@ using System.Collections.Generic;
 namespace SwipeType
 {
     /// <summary>
-    /// SwipeType using Damerau–Levenshtein distance.
+    ///     SwipeType using Damerau–Levenshtein distance.
     /// </summary>
     public class DistanceSwipeType : SwipeType
     {
@@ -37,14 +37,15 @@ namespace SwipeType
             if (input == null)
                 throw new ArgumentNullException(nameof(input));
 
-            var inputStr = input.ToLower();
+            string inputStr = input.ToLower();
             var listSuggestion = new List<string>();
-
             int min = int.MaxValue;
+
             foreach (var s in Words)
             {
                 int d = TextDistance.GetDamerauLevenshteinDistance(inputStr, s);
                 int t = Math.Min(min, d);
+
                 if (min > t)
                     listSuggestion.Clear();
 
