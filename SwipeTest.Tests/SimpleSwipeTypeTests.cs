@@ -28,7 +28,7 @@ namespace SwipeTest.Tests
         {
             try
             {
-                SwipeType.SwipeType simpleSwipeType = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+                SwipeType.SwipeType swipeType = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
             }
             catch (OutOfMemoryException e)
             {
@@ -45,7 +45,7 @@ namespace SwipeTest.Tests
         {
             try
             {
-                SwipeType.SwipeType simpleSwipeType = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+                SwipeType.SwipeType swipeType = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
                 var testing = new Dictionary<string, List<string>>
                 {
                     ["heqerqllo"] = new List<string>
@@ -60,14 +60,14 @@ namespace SwipeTest.Tests
                     },
                     ["wertyuioiuytrtghjklkjhgfd"] = new List<string>
                     {
-                        "wed",
                         "weird",
+                        "world",
+                        "would",
                         "weld",
                         "wild",
                         "wold",
                         "word",
-                        "world",
-                        "would"
+                        "wed"
                     },
                     ["dfghjioijhgvcftyuioiuytr"] = new List<string>
                     {
@@ -82,15 +82,15 @@ namespace SwipeTest.Tests
                     },
                     ["asdfgrtyuijhvcvghuiklkjuytyuytre"] = new List<string>
                     {
-                        "adjure",
                         "agriculture",
                         "article",
+                        "adjure",
                         "astute"
                     },
                     ["mjuytfdsdftyuiuhgvc"] = new List<string>
                     {
-                        "music",
-                        "mystic"
+                        "mystic",
+                        "music"
                     },
                     ["vghjioiuhgvcxsasdvbhuiklkjhgfdsaserty"] = new List<string>
                     {
@@ -100,7 +100,58 @@ namespace SwipeTest.Tests
 
                 foreach (var s in testing)
                 {
-                    foreach (var x in simpleSwipeType.GetSuggestion(s.Key))
+                    foreach (var x in swipeType.GetSuggestion(s.Key))
+                        if (!s.Value.Remove(x))
+                            Console.WriteLine($"New match: {x}");
+                }
+
+                foreach (var s in testing)
+                    if (s.Value.Count > 0)
+                        Assert.Fail("GetSuggestionTest fail with new match");
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"GetSuggestionTest fail with exception: {ex}");
+            }
+        }
+
+        [TestMethod]
+        public void GetSuggestionCountTest()
+        {
+            try
+            {
+                SwipeType.SwipeType swipeType = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+                var testing = new Dictionary<string, List<string>>
+                {
+                    ["heqerqllo"] = new List<string>
+                    {
+                        "hello",
+                        "hero",
+                        "ho"
+                    },
+                    ["wertyuioiuytrtghjklkjhgfd"] = new List<string>
+                    {
+                        "weird",
+                        "world",
+                        "would"
+                    },
+                    ["dfghjioijhgvcftyuioiuytr"] = new List<string>
+                    {
+                        "doctor",
+                        "door",
+                        "dour"
+                    },
+                    ["asdfgrtyuijhvcvghuiklkjuytyuytre"] = new List<string>
+                    {
+                        "agriculture",
+                        "article",
+                        "adjure"
+                    }
+                };
+
+                foreach (var s in testing)
+                {
+                    foreach (var x in swipeType.GetSuggestion(s.Key, 3))
                         if (!s.Value.Remove(x))
                             Console.WriteLine($"New match: {x}");
                 }

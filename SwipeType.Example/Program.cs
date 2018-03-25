@@ -61,10 +61,7 @@ namespace SwipeType.Example
 
                 int length = result.Length;
                 for (int i = 0; i < length; ++i)
-                {
-                    var x = result[i];
-                    Console.WriteLine($"match {i + 1}: {x}");
-                }
+                    Console.WriteLine($"match {i + 1}: {result[i]}");
             }
         }
     }

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SwipeType;
@@ -28,7 +27,7 @@ namespace SwipeTest.Tests
         {
             try
             {
-                SwipeType.SwipeType distanceSwipeType = new DistanceSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+                SwipeType.SwipeType swipeType = new DistanceSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
             }
             catch (OutOfMemoryException e)
             {
@@ -45,7 +44,7 @@ namespace SwipeTest.Tests
         {
             try
             {
-                SwipeType.SwipeType distanceSwipeType = new DistanceSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+                SwipeType.SwipeType swipeType = new DistanceSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
                 string[] testing =
                 {
                     "heqerqllo",
@@ -60,7 +59,40 @@ namespace SwipeTest.Tests
 
                 foreach (var s in testing)
                 {
-                    if (s.Length < 0)
+                    var x = swipeType.GetSuggestion(s);
+                    if (x.Length < 0)
+                        Assert.Fail("GetSuggestionTest fail with no match");
+                }
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"GetSuggestionTest fail with exception: {ex}");
+            }
+        }
+
+        [TestMethod]
+        public void GetSuggestionCountTest()
+        {
+            try
+            {
+                SwipeType.SwipeType swipeType = new DistanceSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+                string[] testing =
+                {
+                    "heqerqllo",
+                    "qwertyuihgfcvbnjk",
+                    "wertyuioiuytrtghjklkjhgfd",
+                    "dfghjioijhgvcftyuioiuytr",
+                    "aserfcvghjiuytedcftyuytre",
+                    "asdfgrtyuijhvcvghuiklkjuytyuytre",
+                    "mjuytfdsdftyuiuhgvc",
+                    "vghjioiuhgvcxsasdvbhuiklkjhgfdsaserty"
+                };
+
+                foreach (var s in testing)
+                {
+                    const int count = 3;
+                    var x = swipeType.GetSuggestion(s, count);
+                    if (x.Length < count)
                         Assert.Fail("GetSuggestionTest fail with no match");
                 }
             }
