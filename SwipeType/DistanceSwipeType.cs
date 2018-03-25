@@ -34,28 +34,17 @@ namespace SwipeType
         /// <returns></returns>
         public override string[] GetSuggestion(string input)
         {
+            return GetSuggestionHelper(input).ToArray();
+        }
+
+        private IEnumerable<string> GetSuggestionHelper(string input)
+        {
             if (input == null)
                 throw new ArgumentNullException(nameof(input));
 
             string inputStr = input.ToLower();
-            var listSuggestion = new List<string>();
-            int min = int.MaxValue;
 
-            foreach (var s in Words)
-            {
-                int d = TextDistance.GetDamerauLevenshteinDistance(inputStr, s);
-                int t = Math.Min(min, d);
-
-                if (min > t)
-                    listSuggestion.Clear();
-
-                min = t;
-
-                if (d == min)
-                    listSuggestion.Add(s);
-            }
-
-            return listSuggestion.ToArray();
+            return Words.OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(inputStr, x));
         }
     }
 }
