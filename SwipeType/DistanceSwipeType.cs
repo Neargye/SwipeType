@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SwipeType
 {
@@ -28,13 +29,24 @@ namespace SwipeType
         public DistanceSwipeType(string[] wordList) : base(wordList) { }
 
         /// <summary>
-        ///     Returns suggestions for a given inputStr.
+        ///     Returns suggestions for an input string.
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">Input string</param>
         /// <returns></returns>
         public override string[] GetSuggestion(string input)
         {
             return GetSuggestionHelper(input).ToArray();
+        }
+
+        /// <summary>
+        ///     Returns suggestions for an input string.
+        /// </summary>
+        /// <param name="input">Input string</param>
+        /// <param name="count">The number of elements to return.</param>
+        /// <returns></returns>
+        public override string[] GetSuggestion(string input, int count)
+        {
+            return GetSuggestionHelper(input).Take(count).ToArray();
         }
 
         private IEnumerable<string> GetSuggestionHelper(string input)

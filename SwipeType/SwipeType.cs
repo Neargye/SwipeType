@@ -20,11 +20,6 @@ namespace SwipeType
     public abstract class SwipeType
     {
         /// <summary>
-        ///     Dictionary of words.
-        /// </summary>
-        public string[] Words { get; }
-
-        /// <summary>
         /// </summary>
         /// <param name="wordList">The dictionary of words.</param>
         protected SwipeType(string[] wordList)
@@ -33,10 +28,23 @@ namespace SwipeType
         }
 
         /// <summary>
-        ///     Returns suggestions for a given inputStr.
+        ///     Dictionary of words.
         /// </summary>
-        /// <param name="input"></param>
+        public string[] Words { get; }
+
+        /// <summary>
+        ///     Returns suggestions for an input string.
+        /// </summary>
+        /// <param name="input">Input string</param>
         /// <returns></returns>
         public abstract string[] GetSuggestion(string input);
+
+        /// <summary>
+        ///     Returns suggestions for an input string.
+        /// </summary>
+        /// <param name="input">Input string</param>
+        /// <param name="count">The number of elements to return.</param>
+        /// <returns></returns>
+        public abstract string[] GetSuggestion(string input, int count);
     }
 }

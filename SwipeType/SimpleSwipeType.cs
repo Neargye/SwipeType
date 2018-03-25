@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -39,11 +40,28 @@ namespace SwipeType
         public SimpleSwipeType(string[] wordList) : base(wordList) { }
 
         /// <summary>
-        ///     Returns suggestions for a given inputStr.
+        ///     Returns suggestions for an input string.
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">Input string</param>
         /// <returns></returns>
         public override string[] GetSuggestion(string input)
+        {
+            return GetSuggestionHelper(input).ToArray();
+        }
+
+        /// <summary>
+        ///     Returns suggestions for an input string.
+        /// </summary>
+        /// <param name="input">Input string</param>
+        /// <param name="count">The number of elements to return.</param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public override string[] GetSuggestion(string input, int count)
+        {
+            return GetSuggestionHelper(input).Take(count).ToArray();
+        }
+
+        private IEnumerable<string> GetSuggestionHelper(string input)
         {
             if (input == null)
                 throw new ArgumentNullException(nameof(input));
@@ -53,8 +71,7 @@ namespace SwipeType
                 .Where(x => (!string.IsNullOrEmpty(x)) && (x[0] == inputStr[0]) && (x[x.Length > 0 ? x.Length - 1 : 0] == inputStr[inputStr.Length > 0 ? inputStr.Length - 1 : 0]))
                 .Where(x => Match(inputStr, x))
                 .Where(x => x.Length > GetMinimumWordlength(inputStr))
-                .OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(inputStr, x))
-                .ToArray();
+                .OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(inputStr, x));
         }
 
         /// <summary>
