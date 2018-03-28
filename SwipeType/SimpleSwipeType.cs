@@ -107,7 +107,7 @@ namespace SwipeType
                 if (KeyboardLayoutEnglish[i].Contains(c))
                     return i;
 
-            throw new ArgumentException($"The char should be of {nameof(KeyboardLayoutEnglish)} layout type.");
+            return -1;
         }
 
         /// <summary>
@@ -143,7 +143,11 @@ namespace SwipeType
         {
             var rowNumbers = new StringBuilder();
             foreach (char inChar in path)
-                rowNumbers.Append(GetKeyboardRow(inChar));
+            {
+                int i = GetKeyboardRow(inChar);
+                if (i >= 0)
+                    rowNumbers.Append(i);
+            }
 
             var compressedRowNumbers = Compress(rowNumbers);
             return compressedRowNumbers.Length - 3;
