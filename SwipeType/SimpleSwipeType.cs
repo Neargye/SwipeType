@@ -46,6 +46,9 @@ namespace SwipeType
         /// <returns></returns>
         public override string[] GetSuggestion(string input)
         {
+            if (string.IsNullOrEmpty(input))
+                return new string[0];
+
             return GetSuggestionHelper(input).ToArray();
         }
 
@@ -58,14 +61,14 @@ namespace SwipeType
         /// <exception cref="NotImplementedException"></exception>
         public override string[] GetSuggestion(string input, int count)
         {
+            if (string.IsNullOrEmpty(input))
+                return new string[0];
+
             return GetSuggestionHelper(input).Take(count).ToArray();
         }
 
         private IEnumerable<string> GetSuggestionHelper(string input)
         {
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-
             string inputStr = input.ToLower();
             return Words
                 .Where(x => (!string.IsNullOrEmpty(x)) && (x[0] == inputStr[0]) && (x[x.Length > 0 ? x.Length - 1 : 0] == inputStr[inputStr.Length > 0 ? inputStr.Length - 1 : 0]))

@@ -35,6 +35,9 @@ namespace SwipeType
         /// <returns></returns>
         public override string[] GetSuggestion(string input)
         {
+            if (string.IsNullOrEmpty(input))
+                return new string[0];
+
             return GetSuggestionHelper(input).ToArray();
         }
 
@@ -46,14 +49,14 @@ namespace SwipeType
         /// <returns></returns>
         public override string[] GetSuggestion(string input, int count)
         {
+            if (string.IsNullOrEmpty(input))
+                return new string[0];
+
             return GetSuggestionHelper(input).Take(count).ToArray();
         }
 
         private IEnumerable<string> GetSuggestionHelper(string input)
         {
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-
             string inputStr = input.ToLower();
 
             return Words.OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(inputStr, x));
