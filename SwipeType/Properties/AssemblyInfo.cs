@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("SwipeType")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Terik23")]
+[assembly: AssemblyCompany("Daniil Goncharov")]
 [assembly: AssemblyProduct("SwipeType")]
-[assembly: AssemblyCopyright("Copyright © Terik23 2018")]
+[assembly: AssemblyCopyright("Copyright © Daniil Goncharov 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
