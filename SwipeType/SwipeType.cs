@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace SwipeType
 {
     /// <summary>
@@ -22,10 +26,7 @@ namespace SwipeType
         /// <summary>
         /// </summary>
         /// <param name="wordList">The dictionary of words.</param>
-        protected SwipeType(string[] wordList)
-        {
-            Words = wordList;
-        }
+        protected SwipeType(string[] wordList) { Words = wordList; }
 
         /// <summary>
         ///     Dictionary of words.
@@ -37,7 +38,15 @@ namespace SwipeType
         /// </summary>
         /// <param name="input">Input string</param>
         /// <returns></returns>
-        public abstract string[] GetSuggestion(string input);
+        public string[] GetSuggestion(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return new string[0];
+            }
+
+            return GetSuggestionHelper(input).ToArray();
+        }
 
         /// <summary>
         ///     Returns suggestions for an input string.
@@ -45,6 +54,22 @@ namespace SwipeType
         /// <param name="input">Input string</param>
         /// <param name="count">The number of elements to return.</param>
         /// <returns></returns>
-        public abstract string[] GetSuggestion(string input, int count);
+        /// <exception cref="NotImplementedException"></exception>
+        public string[] GetSuggestion(string input, int count)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return new string[0];
+            }
+
+            return GetSuggestionHelper(input).Take(count).ToArray();
+        }
+
+        /// <summary>
+        ///     Returns suggestions for an input string.
+        /// </summary>
+        /// <param name="input">Input string</param>
+        /// <returns></returns>
+        protected abstract IEnumerable<string> GetSuggestionHelper(string input);
     }
 }

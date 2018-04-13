@@ -61,7 +61,9 @@ namespace SwipeTest.Tests
                 {
                     var x = swipeType.GetSuggestion(s);
                     if (x.Length < 0)
+                    {
                         Assert.Fail("GetSuggestionTest fail with no match");
+                    }
                 }
             }
             catch (Exception ex)
@@ -93,7 +95,9 @@ namespace SwipeTest.Tests
                     const int count = 3;
                     var x = swipeType.GetSuggestion(s, count);
                     if (x.Length < count)
+                    {
                         Assert.Fail("GetSuggestionTest fail with no match");
+                    }
                 }
             }
             catch (Exception ex)

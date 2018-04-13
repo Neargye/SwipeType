@@ -101,13 +101,19 @@ namespace SwipeTest.Tests
                 foreach (var s in testing)
                 {
                     foreach (var x in swipeType.GetSuggestion(s.Key))
+                    {
                         if (!s.Value.Remove(x))
+                        {
                             Console.WriteLine($"New match: {x}");
+                        }
+                    }
                 }
 
                 foreach (var s in testing)
                     if (s.Value.Count > 0)
+                    {
                         Assert.Fail("GetSuggestionTest fail with new match");
+                    }
             }
             catch (Exception ex)
             {
@@ -152,13 +158,21 @@ namespace SwipeTest.Tests
                 foreach (var s in testing)
                 {
                     foreach (var x in swipeType.GetSuggestion(s.Key, 3))
+                    {
                         if (!s.Value.Remove(x))
+                        {
                             Console.WriteLine($"New match: {x}");
+                        }
+                    }
                 }
 
                 foreach (var s in testing)
+                {
                     if (s.Value.Count > 0)
+                    {
                         Assert.Fail("GetSuggestionTest fail with new match");
+                    }
+                }
             }
             catch (Exception ex)
             {

@@ -18,7 +18,7 @@ using System.IO;
 
 namespace SwipeType.Example
 {
-    internal class Program
+    internal static class Program
     {
         private static void Main()
         {
@@ -54,14 +54,16 @@ namespace SwipeType.Example
                 Console.WriteLine($"Raw string: {s}");
 
                 stopwatch.Start();
-                var result = swipeType.GetSuggestion(s);
+                var result = swipeType.GetSuggestion(s, 10);
                 stopwatch.Stop();
                 Console.WriteLine($"Match time: {stopwatch.ElapsedMilliseconds} ms");
                 stopwatch.Reset();
 
                 int length = result.Length;
                 for (int i = 0; i < length; ++i)
+                {
                     Console.WriteLine($"match {i + 1}: {result[i]}");
+                }
             }
         }
     }

@@ -27,10 +27,14 @@ namespace SwipeType
             var matrix = new int[height, width];
 
             for (int h = 0; h < height; ++h)
+            {
                 matrix[h, 0] = h;
+            }
 
             for (int w = 0; w < width; ++w)
+            {
                 matrix[0, w] = w;
+            }
 
             for (int h = 1; h < height; ++h)
             {
@@ -44,7 +48,9 @@ namespace SwipeType
                     int distance = Math.Min(insertion, Math.Min(deletion, substitution));
 
                     if ((h > 1) && (w > 1) && (source[h - 1] == target[w - 2]) && (source[h - 2] == target[w - 1]))
+                    {
                         distance = Math.Min(distance, matrix[h - 2, w - 2] + cost);
+                    }
 
                     matrix[h, w] = distance;
                 }

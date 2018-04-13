@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace SwipeType
@@ -28,36 +28,10 @@ namespace SwipeType
         /// <param name="wordList">The dictionary of words.</param>
         public DistanceSwipeType(string[] wordList) : base(wordList) { }
 
-        /// <summary>
-        ///     Returns suggestions for an input string.
-        /// </summary>
-        /// <param name="input">Input string</param>
-        /// <returns></returns>
-        public override string[] GetSuggestion(string input)
+        /// <inheritdoc />
+        protected override IEnumerable<string> GetSuggestionHelper(string input)
         {
-            if (string.IsNullOrEmpty(input))
-                return new string[0];
-
-            return GetSuggestionHelper(input).ToArray();
-        }
-
-        /// <summary>
-        ///     Returns suggestions for an input string.
-        /// </summary>
-        /// <param name="input">Input string</param>
-        /// <param name="count">The number of elements to return.</param>
-        /// <returns></returns>
-        public override string[] GetSuggestion(string input, int count)
-        {
-            if (string.IsNullOrEmpty(input))
-                return new string[0];
-
-            return GetSuggestionHelper(input).Take(count).ToArray();
-        }
-
-        private IEnumerable<string> GetSuggestionHelper(string input)
-        {
-            string inputStr = input.ToLower();
+            string inputStr = input.ToLower(CultureInfo.InvariantCulture);
 
             return Words.OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(inputStr, x));
         }
