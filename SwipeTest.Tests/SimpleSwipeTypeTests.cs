@@ -158,10 +158,7 @@ namespace SwipeTest.Tests
                 {
                     foreach (var x in swipeType.GetSuggestion(s.Key, 3))
                     {
-                        if (!s.Value.Remove(x))
-                        {
-                            Console.WriteLine($"New match: {x}");
-                        }
+                        s.Value.Remove(x);
                     }
                 }
 
