@@ -19,7 +19,7 @@ using System.Linq;
 namespace SwipeType
 {
     /// <summary>
-    ///     Abstract SwipeType.
+    /// Abstract SwipeType.
     /// </summary>
     public abstract class SwipeType
     {
@@ -29,27 +29,22 @@ namespace SwipeType
         protected SwipeType(string[] wordList) { Words = wordList; }
 
         /// <summary>
-        ///     Dictionary of words.
+        /// Dictionary of words.
         /// </summary>
         public string[] Words { get; }
 
         /// <summary>
-        ///     Returns suggestions for an input string.
+        /// Returns suggestions for an input string.
         /// </summary>
         /// <param name="input">Input string</param>
         /// <returns></returns>
         public string[] GetSuggestion(string input)
         {
-            if (string.IsNullOrEmpty(input))
-            {
-                return new string[0];
-            }
-
-            return GetSuggestionHelper(input).ToArray();
+            return string.IsNullOrEmpty(input) ? new string[0] : GetSuggestionInternal(input).ToArray();
         }
 
         /// <summary>
-        ///     Returns suggestions for an input string.
+        /// Returns suggestions for an input string.
         /// </summary>
         /// <param name="input">Input string</param>
         /// <param name="count">The number of elements to return.</param>
@@ -57,19 +52,14 @@ namespace SwipeType
         /// <exception cref="NotImplementedException"></exception>
         public string[] GetSuggestion(string input, int count)
         {
-            if (string.IsNullOrEmpty(input))
-            {
-                return new string[0];
-            }
-
-            return GetSuggestionHelper(input).Take(count).ToArray();
+            return string.IsNullOrEmpty(input) ? new string[0] : GetSuggestionInternal(input).Take(count).ToArray();
         }
 
         /// <summary>
-        ///     Returns suggestions for an input string.
+        /// Returns suggestions for an input string.
         /// </summary>
         /// <param name="input">Input string</param>
         /// <returns></returns>
-        protected abstract IEnumerable<string> GetSuggestionHelper(string input);
+        protected abstract IEnumerable<string> GetSuggestionInternal(string input);
     }
 }

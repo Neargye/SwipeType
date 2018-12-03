@@ -22,7 +22,7 @@ namespace SwipeType.Example
     {
         private static void Main()
         {
-            SwipeType simpleSwipeType = new SimpleSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+            SwipeType simpleSwipeType = new MatchSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
             SampleUsingSwipeType(simpleSwipeType);
             Console.ReadKey(true);
 

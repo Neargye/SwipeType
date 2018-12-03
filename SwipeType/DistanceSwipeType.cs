@@ -19,7 +19,7 @@ using System.Linq;
 namespace SwipeType
 {
     /// <summary>
-    ///     SwipeType using Damerau–Levenshtein distance.
+    /// SwipeType using Damerau–Levenshtein distance.
     /// </summary>
     public class DistanceSwipeType : SwipeType
     {
@@ -28,8 +28,7 @@ namespace SwipeType
         /// <param name="wordList">The dictionary of words.</param>
         public DistanceSwipeType(string[] wordList) : base(wordList) { }
 
-        /// <inheritdoc />
-        protected override IEnumerable<string> GetSuggestionHelper(string input)
+        protected override IEnumerable<string> GetSuggestionInternal(string input)
         {
             string inputStr = input.ToLower(CultureInfo.InvariantCulture);
 

@@ -20,12 +20,12 @@ using System.Text;
 namespace SwipeType
 {
     /// <summary>
-    ///     Simple SwipeType.
+    /// MatchSwipeType.
     /// </summary>
-    public class SimpleSwipeType : SwipeType
+    public class MatchSwipeType : SwipeType
     {
         /// <summary>
-        ///     Keyboard layout.
+        /// Keyboard layout.
         /// </summary>
         private static readonly string[] KeyboardLayoutEnglish =
         {
@@ -37,10 +37,9 @@ namespace SwipeType
         /// <summary>
         /// </summary>
         /// <param name="wordList">The dictionary of words.</param>
-        public SimpleSwipeType(string[] wordList) : base(wordList) { }
+        public MatchSwipeType(string[] wordList) : base(wordList) { }
 
-        /// <inheritdoc />
-        protected override IEnumerable<string> GetSuggestionHelper(string input)
+        protected override IEnumerable<string> GetSuggestionInternal(string input)
         {
             string inputStr = input.ToLower(CultureInfo.InvariantCulture);
             return Words
@@ -51,7 +50,7 @@ namespace SwipeType
         }
 
         /// <summary>
-        ///     Checks if a letter is present in a path or not.
+        /// Checks if a letter is present in a path or not.
         /// </summary>
         /// <param name="path"></param>
         /// <param name="word"></param>
@@ -75,7 +74,7 @@ namespace SwipeType
         }
 
         /// <summary>
-        ///     Returns the row number of the character.
+        /// Returns the row number of the character.
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
@@ -93,7 +92,7 @@ namespace SwipeType
         }
 
         /// <summary>
-        ///     Removes redundant sequential characters.
+        /// Removes redundant sequential characters.
         /// </summary>
         /// <param name="sequence"></param>
         /// <returns></returns>
@@ -121,9 +120,9 @@ namespace SwipeType
         }
 
         /// <summary>
-        ///     Returns the minimum possible word length from the path.
-        ///     Uses the number of transitions from different rows in
-        ///     the keyboard layout to determin the minimum length.
+        /// Returns the minimum possible word length from the path.
+        /// Uses the number of transitions from different rows in
+        /// the keyboard layout to determin the minimum length.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
