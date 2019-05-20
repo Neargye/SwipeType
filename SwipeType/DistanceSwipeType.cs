@@ -28,10 +28,13 @@ namespace SwipeType
         /// <param name="wordList">The dictionary of words.</param>
         public DistanceSwipeType(string[] wordList) : base(wordList) { }
 
-        protected override IEnumerable<string> GetSuggestionInternal(string input)
+        /// <summary>
+        /// Returns suggestions for an input string.
+        /// </summary>
+        /// <param name="input">Input string</param>
+        protected override IEnumerable<string> GetSuggestionImpl(string input)
         {
             string inputStr = input.ToLower(CultureInfo.InvariantCulture);
-
             return Words.OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(inputStr, x));
         }
     }

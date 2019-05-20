@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Daniil Goncharov")]
 [assembly: AssemblyProduct("SwipeType")]
-[assembly: AssemblyCopyright("Copyright © Daniil Goncharov 2018")]
+[assembly: AssemblyCopyright("Copyright © Daniil Goncharov 2018 - 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

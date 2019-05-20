@@ -39,11 +39,15 @@ namespace SwipeType
         /// <param name="wordList">The dictionary of words.</param>
         public MatchSwipeType(string[] wordList) : base(wordList) { }
 
-        protected override IEnumerable<string> GetSuggestionInternal(string input)
+        /// <summary>
+        /// Returns suggestions for an input string.
+        /// </summary>
+        /// <param name="input">Input string</param>
+        protected override IEnumerable<string> GetSuggestionImpl(string input)
         {
             string inputStr = input.ToLower(CultureInfo.InvariantCulture);
             return Words
-                   .Where(x => (!string.IsNullOrEmpty(x)) && (x[0] == inputStr[0]) && (x[x.Length > 0 ? x.Length - 1 : 0] == inputStr[inputStr.Length > 0 ? inputStr.Length - 1 : 0]))
+                   .Where(x => !string.IsNullOrEmpty(x) && x.First() == inputStr.First() && x.Last() == inputStr.Last())
                    .Where(x => Match(inputStr, x))
                    .Where(x => x.Length > GetMinimumWordlength(inputStr))
                    .OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(inputStr, x));
@@ -52,8 +56,6 @@ namespace SwipeType
         /// <summary>
         /// Checks if a letter is present in a path or not.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="word"></param>
         private static bool Match(string path, string word)
         {
             int i = 0;
@@ -76,8 +78,6 @@ namespace SwipeType
         /// <summary>
         /// Returns the row number of the character.
         /// </summary>
-        /// <param name="c"></param>
-        /// <returns></returns>
         private static int GetKeyboardRow(char c)
         {
             for (int i = 0; i < KeyboardLayoutEnglish.Length; ++i)
@@ -94,8 +94,6 @@ namespace SwipeType
         /// <summary>
         /// Removes redundant sequential characters.
         /// </summary>
-        /// <param name="sequence"></param>
-        /// <returns></returns>
         private static StringBuilder Compress(StringBuilder sequence)
         {
             // Example: 11123311 => 1231.
@@ -124,8 +122,6 @@ namespace SwipeType
         /// Uses the number of transitions from different rows in
         /// the keyboard layout to determin the minimum length.
         /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
         private static int GetMinimumWordlength(string path)
         {
             var rowNumbers = new StringBuilder();
@@ -138,8 +134,7 @@ namespace SwipeType
                 }
             }
 
-            var compressedRowNumbers = Compress(rowNumbers);
-            return compressedRowNumbers.Length - 3;
+            return Compress(rowNumbers).Length - 3;
         }
     }
 }

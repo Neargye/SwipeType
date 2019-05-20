@@ -18,45 +18,78 @@ namespace SwipeType
 {
     internal static class TextDistance
     {
-        // Determine the Damerau-Levensh distance between source and target
-        internal static int GetDamerauLevenshteinDistance(string source, string target)
+        internal static int GetDamerauLevenshteinDistance(string source, string target, int max = -1)
         {
-            int height = source.Length + 1;
-            int width = target.Length + 1;
+            int maxLength = Math.Max(source.Length, target.Length);
+            int[] currentRow = new int[maxLength + 1];
+            int[] previousRow = new int[maxLength + 1];
+            int[] transpositionRow = new int[maxLength + 1];
 
-            var matrix = new int[height, width];
+            int firstLength = source.Length;
+            int secondLength = target.Length;
 
-            for (int h = 0; h < height; ++h)
+            if (firstLength == 0)
             {
-                matrix[h, 0] = h;
+                return secondLength;
+            }
+            if (secondLength == 0)
+            {
+                return firstLength;
             }
 
-            for (int w = 0; w < width; ++w)
+            if (firstLength > secondLength)
             {
-                matrix[0, w] = w;
+                string tmp = source;
+                source = target;
+                target = tmp;
+                firstLength = secondLength;
+                secondLength = target.Length;
             }
 
-            for (int h = 1; h < height; ++h)
+            if (max < 0)
             {
-                for (int w = 1; w < width; ++w)
+                max = secondLength;
+            }
+            if (secondLength - firstLength > max)
+            {
+                return max + 1;
+            }
+
+            for (int i = 0; i <= firstLength; i++)
+            {
+                previousRow[i] = i;
+            }
+
+            char lastSecondCh = (char)0;
+            for (int i = 1; i <= secondLength; i++)
+            {
+                char secondCh = target[i - 1];
+                currentRow[0] = i;
+                int from = Math.Max(i - max - 1, 1);
+                int to = Math.Min(i + max + 1, firstLength);
+
+                char lastFirstCh = (char)0;
+                for (int j = from; j <= to; j++)
                 {
-                    int cost = (source[h - 1] == target[w - 1]) ? 0 : 1;
-                    int insertion = matrix[h, w - 1] + 1;
-                    int deletion = matrix[h - 1, w] + 1;
-                    int substitution = matrix[h - 1, w - 1] + cost;
-
-                    int distance = Math.Min(insertion, Math.Min(deletion, substitution));
-
-                    if ((h > 1) && (w > 1) && (source[h - 1] == target[w - 2]) && (source[h - 2] == target[w - 1]))
+                    char firstCh = source[j - 1];
+                    int cost = firstCh == secondCh ? 0 : 1;
+                    int value = Math.Min(Math.Min(currentRow[j - 1] + 1, previousRow[j] + 1), previousRow[j - 1] + cost);
+                    if (firstCh == lastSecondCh && secondCh == lastFirstCh)
                     {
-                        distance = Math.Min(distance, matrix[h - 2, w - 2] + cost);
+                        value = Math.Min(value, transpositionRow[j - 2] + cost);
                     }
-
-                    matrix[h, w] = distance;
+                    currentRow[j] = value;
+                    lastFirstCh = firstCh;
                 }
+                lastSecondCh = secondCh;
+
+                int[] tempRow = transpositionRow;
+                transpositionRow = previousRow;
+                previousRow = currentRow;
+                currentRow = tempRow;
             }
 
-            return matrix[height - 1, width - 1];
+            return previousRow[firstLength];
         }
     }
 }

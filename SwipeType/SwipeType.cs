@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -37,10 +36,9 @@ namespace SwipeType
         /// Returns suggestions for an input string.
         /// </summary>
         /// <param name="input">Input string</param>
-        /// <returns></returns>
         public string[] GetSuggestion(string input)
         {
-            return string.IsNullOrEmpty(input) ? new string[0] : GetSuggestionInternal(input).ToArray();
+            return string.IsNullOrEmpty(input) ? new string[0] : GetSuggestionImpl(input).ToArray();
         }
 
         /// <summary>
@@ -48,18 +46,15 @@ namespace SwipeType
         /// </summary>
         /// <param name="input">Input string</param>
         /// <param name="count">The number of elements to return.</param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public string[] GetSuggestion(string input, int count)
         {
-            return string.IsNullOrEmpty(input) ? new string[0] : GetSuggestionInternal(input).Take(count).ToArray();
+            return string.IsNullOrEmpty(input) ? new string[0] : GetSuggestionImpl(input).Take(count).ToArray();
         }
 
         /// <summary>
         /// Returns suggestions for an input string.
         /// </summary>
         /// <param name="input">Input string</param>
-        /// <returns></returns>
-        protected abstract IEnumerable<string> GetSuggestionInternal(string input);
+        protected abstract IEnumerable<string> GetSuggestionImpl(string input);
     }
 }
