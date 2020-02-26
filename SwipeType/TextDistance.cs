@@ -18,78 +18,100 @@ namespace SwipeType
 {
     internal static class TextDistance
     {
-        internal static int GetDamerauLevenshteinDistance(string source, string target, int max = -1)
+        internal static int GetDamerauLevenshteinDistance(this string s, string t)
         {
-            int maxLength = Math.Max(source.Length, target.Length);
-            int[] currentRow = new int[maxLength + 1];
-            int[] previousRow = new int[maxLength + 1];
-            int[] transpositionRow = new int[maxLength + 1];
-
-            int firstLength = source.Length;
-            int secondLength = target.Length;
-
-            if (firstLength == 0)
+            if (string.IsNullOrEmpty(s))
             {
-                return secondLength;
+                return (t ?? "").Length;
             }
-            if (secondLength == 0)
+            if (string.IsNullOrEmpty(t))
             {
-                return firstLength;
+                return s.Length;
             }
 
-            if (firstLength > secondLength)
+            if (s.Length > t.Length)
             {
-                string tmp = source;
-                source = target;
-                target = tmp;
-                firstLength = secondLength;
-                secondLength = target.Length;
+                var temp = s;
+                s = t;
+                t = temp;
+            }
+            int sLen = s.Length;
+            int tLen = t.Length;
+
+            while ((sLen > 0) && (s[sLen - 1] == t[tLen - 1]))
+            {
+                sLen--; tLen--;
             }
 
-            if (max < 0)
+            int start = 0;
+            if ((s[0] == t[0]) || (sLen == 0))
             {
-                max = secondLength;
-            }
-            if (secondLength - firstLength > max)
-            {
-                return max + 1;
-            }
-
-            for (int i = 0; i <= firstLength; i++)
-            {
-                previousRow[i] = i;
-            }
-
-            char lastSecondCh = (char)0;
-            for (int i = 1; i <= secondLength; i++)
-            {
-                char secondCh = target[i - 1];
-                currentRow[0] = i;
-                int from = Math.Max(i - max - 1, 1);
-                int to = Math.Min(i + max + 1, firstLength);
-
-                char lastFirstCh = (char)0;
-                for (int j = from; j <= to; j++)
+                while ((start < sLen) && (s[start] == t[start]))
                 {
-                    char firstCh = source[j - 1];
-                    int cost = firstCh == secondCh ? 0 : 1;
-                    int value = Math.Min(Math.Min(currentRow[j - 1] + 1, previousRow[j] + 1), previousRow[j - 1] + cost);
-                    if (firstCh == lastSecondCh && secondCh == lastFirstCh)
-                    {
-                        value = Math.Min(value, transpositionRow[j - 2] + cost);
-                    }
-                    currentRow[j] = value;
-                    lastFirstCh = firstCh;
+                    start++;
                 }
-                lastSecondCh = secondCh;
+                sLen -= start;
+                tLen -= start;
 
-                int[] tempRow = transpositionRow;
-                transpositionRow = previousRow;
-                previousRow = currentRow;
-                currentRow = tempRow;
+                if (sLen == 0)
+                {
+                    return tLen;
+                }
+
+                t = t.Substring(start, tLen);
             }
 
-            return previousRow[firstLength];
+            var v0 = new int[tLen];
+            var v2 = new int[tLen];
+            for (int j = 0; j < tLen; j++)
+            {
+                v0[j] = j + 1;
+            }
+
+            char sChar = s[0];
+            int current = 0;
+            for (int i = 0; i < sLen; i++)
+            {
+                char prevsChar = sChar;
+                sChar = s[start + i];
+                char tChar = t[0];
+                int left = i;
+                current = i + 1;
+                int nextTransCost = 0;
+                for (int j = 0; j < tLen; j++)
+                {
+                    int above = current;
+                    int thisTransCost = nextTransCost;
+                    nextTransCost = v2[j];
+                    v2[j] = current = left;
+                    left = v0[j];
+                    char prevtChar = tChar;
+                    tChar = t[j];
+                    if (sChar != tChar)
+                    {
+                        if (left < current)
+                        {
+                            current = left;
+                        }
+                        if (above < current)
+                        {
+                            current = above;
+                        }
+                        current++;
+                        if ((i != 0) && (j != 0) && (sChar == prevtChar) && (prevsChar == tChar))
+                        {
+                            thisTransCost++;
+                            if (thisTransCost < current)
+                            {
+                                current = thisTransCost;
+                            }
+                        }
+                    }
+                    v0[j] = current;
+                }
+            }
+
+            return current;
         }
     }
 }
