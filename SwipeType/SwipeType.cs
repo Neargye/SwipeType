@@ -37,8 +37,17 @@ namespace SwipeType
         /// Returns suggestions for an input string.
         /// </summary>
         /// <param name="input">Input string</param>
+        public IEnumerable<string> GetSuggestion(string input)
+        {
+            return GetSuggestion(input, -1);
+        }
+
+        /// <summary>
+        /// Returns suggestions for an input string.
+        /// </summary>
+        /// <param name="input">Input string</param>
         /// <param name="count">The number of elements to return.</param>
-        public IEnumerable<string> GetSuggestion(string input, int count = -1)
+        public IEnumerable<string> GetSuggestion(string input, int count)
         {
             if (string.IsNullOrEmpty(input))
             {
