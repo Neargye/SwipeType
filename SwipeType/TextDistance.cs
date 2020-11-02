@@ -40,7 +40,8 @@ namespace SwipeType
 
             while ((sLen > 0) && (s[sLen - 1] == t[tLen - 1]))
             {
-                sLen--; tLen--;
+                sLen--;
+                tLen--;
             }
 
             int start = 0;
@@ -87,24 +88,25 @@ namespace SwipeType
                     left = v0[j];
                     char prevtChar = tChar;
                     tChar = t[j];
-                    if (sChar != tChar)
+                    if (sChar == tChar)
                     {
-                        if (left < current)
+                        continue;
+                    }
+                    if (left < current)
+                    {
+                        current = left;
+                    }
+                    if (above < current)
+                    {
+                        current = above;
+                    }
+                    current++;
+                    if ((i != 0) && (j != 0) && (sChar == prevtChar) && (prevsChar == tChar))
+                    {
+                        thisTransCost++;
+                        if (thisTransCost < current)
                         {
-                            current = left;
-                        }
-                        if (above < current)
-                        {
-                            current = above;
-                        }
-                        current++;
-                        if ((i != 0) && (j != 0) && (sChar == prevtChar) && (prevsChar == tChar))
-                        {
-                            thisTransCost++;
-                            if (thisTransCost < current)
-                            {
-                                current = thisTransCost;
-                            }
+                            current = thisTransCost;
                         }
                     }
                     v0[j] = current;
