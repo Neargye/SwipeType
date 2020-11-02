@@ -34,8 +34,7 @@ namespace SwipeType
         /// <param name="input">Input string</param>
         protected override IEnumerable<string> GetSuggestionImpl(string input)
         {
-            string inputStr = input.ToLower(CultureInfo.InvariantCulture);
-            return Words.OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(inputStr, x));
+            return Words.OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(input, x));
         }
     }
 }

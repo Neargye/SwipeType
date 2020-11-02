@@ -36,19 +36,19 @@ namespace SwipeType
         /// Returns suggestions for an input string.
         /// </summary>
         /// <param name="input">Input string</param>
-        public string[] GetSuggestion(string input)
-        {
-            return string.IsNullOrEmpty(input) ? new string[0] : GetSuggestionImpl(input).ToArray();
-        }
-
-        /// <summary>
-        /// Returns suggestions for an input string.
-        /// </summary>
-        /// <param name="input">Input string</param>
         /// <param name="count">The number of elements to return.</param>
-        public string[] GetSuggestion(string input, int count)
+        public IEnumerable<string> GetSuggestion(string input, int count = -1)
         {
-            return string.IsNullOrEmpty(input) ? new string[0] : GetSuggestionImpl(input).Take(count).ToArray();
+            if (string.IsNullOrEmpty(input))
+            {
+                return Enumerable.Empty<string>();
+            }
+            var suggestion = GetSuggestionImpl(input.ToLower(CultureInfo.InvariantCulture));
+            if (count > 0)
+            {
+                return suggestion.Take(count);
+            }
+            return suggestion;
         }
 
         /// <summary>
