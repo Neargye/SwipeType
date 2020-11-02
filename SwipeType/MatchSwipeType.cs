@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -45,12 +44,11 @@ namespace SwipeType
         /// <param name="input">Input string</param>
         protected override IEnumerable<string> GetSuggestionImpl(string input)
         {
-            string inputStr = input.ToLower(CultureInfo.InvariantCulture);
             return Words
-                   .Where(x => !string.IsNullOrEmpty(x) && x.First() == inputStr.First() && x.Last() == inputStr.Last())
-                   .Where(x => Match(inputStr, x))
-                   .Where(x => x.Length > GetMinimumWordlength(inputStr))
-                   .OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(inputStr, x));
+                   .Where(x => !string.IsNullOrEmpty(x) && x.First() == input.First() && x.Last() == input.Last())
+                   .Where(x => Match(input, x))
+                   .Where(x => x.Length > GetMinimumWordlength(input))
+                   .OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(input, x));
         }
 
         /// <summary>

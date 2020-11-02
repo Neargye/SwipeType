@@ -15,6 +15,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace SwipeType.Example
 {
@@ -59,10 +60,10 @@ namespace SwipeType.Example
                 Console.WriteLine($"Match time: {stopwatch.ElapsedMilliseconds} ms");
                 stopwatch.Reset();
 
-                int length = result.Length;
+                int length = result.Count();
                 for (int i = 0; i < length; ++i)
                 {
-                    Console.WriteLine($"match {i + 1}: {result[i]}");
+                    Console.WriteLine($"match {i + 1}: {result.ElementAt(i)}");
                 }
             }
         }
