@@ -16,6 +16,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SwipeType;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace SwipeTest.Tests
 {
@@ -60,7 +61,7 @@ namespace SwipeTest.Tests
                 foreach (var s in testing)
                 {
                     var x = swipeType.GetSuggestion(s);
-                    if (x.Length < 0)
+                    if (x.Count() <= 0)
                     {
                         Assert.Fail("GetSuggestionTest fail with no match");
                     }
@@ -94,7 +95,7 @@ namespace SwipeTest.Tests
                 {
                     const int count = 3;
                     var x = swipeType.GetSuggestion(s, count);
-                    if (x.Length < count)
+                    if (x.Count() < count)
                     {
                         Assert.Fail("GetSuggestionTest fail with no match");
                     }
