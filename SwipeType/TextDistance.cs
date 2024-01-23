@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
 namespace SwipeType
 {
     internal static class TextDistance
@@ -40,8 +38,8 @@ namespace SwipeType
 
             while ((sLen > 0) && (s[sLen - 1] == t[tLen - 1]))
             {
-                sLen--;
-                tLen--;
+                --sLen;
+                --tLen;
             }
 
             int start = 0;
@@ -49,7 +47,7 @@ namespace SwipeType
             {
                 while ((start < sLen) && (s[start] == t[start]))
                 {
-                    start++;
+                    ++start;
                 }
                 sLen -= start;
                 tLen -= start;
@@ -64,14 +62,14 @@ namespace SwipeType
 
             var v0 = new int[tLen];
             var v2 = new int[tLen];
-            for (int j = 0; j < tLen; j++)
+            for (int j = 0; j < tLen; ++j)
             {
                 v0[j] = j + 1;
             }
 
             char sChar = s[0];
             int current = 0;
-            for (int i = 0; i < sLen; i++)
+            for (int i = 0; i < sLen; ++i)
             {
                 char prevsChar = sChar;
                 sChar = s[start + i];
@@ -79,7 +77,7 @@ namespace SwipeType
                 int left = i;
                 current = i + 1;
                 int nextTransCost = 0;
-                for (int j = 0; j < tLen; j++)
+                for (int j = 0; j < tLen; ++j)
                 {
                     int above = current;
                     int thisTransCost = nextTransCost;
@@ -100,10 +98,10 @@ namespace SwipeType
                     {
                         current = above;
                     }
-                    current++;
+                    ++current;
                     if ((i != 0) && (j != 0) && (sChar == prevtChar) && (prevsChar == tChar))
                     {
-                        thisTransCost++;
+                        ++thisTransCost;
                         if (thisTransCost < current)
                         {
                             current = thisTransCost;
