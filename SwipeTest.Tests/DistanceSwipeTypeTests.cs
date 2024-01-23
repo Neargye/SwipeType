@@ -12,11 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SwipeType;
-using System;
-using System.IO;
-using System.Linq;
 
 namespace SwipeTest.Tests
 {

@@ -1,13 +1,12 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2005
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwipeType", "SwipeType\SwipeType.csproj", "{9277BEDE-C918-4B17-8A4A-32580C0F547A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwipeType", "SwipeType\SwipeType.csproj", "{9277BEDE-C918-4B17-8A4A-32580C0F547A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwipeType.Example", "SwipeType.Example\SwipeType.Example.csproj", "{F3D2E6BA-F712-4B75-9A73-824648119D0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwipeType.Example", "SwipeType.Example\SwipeType.Example.csproj", "{F3D2E6BA-F712-4B75-9A73-824648119D0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwipeTest.Tests", "SwipeTest.Tests\SwipeTest.Tests.csproj", "{C923D046-FC58-4A5A-8FE8-8E50F334FBA4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwipeTest.Tests", "SwipeTest.Tests\SwipeTest.Tests.csproj", "{726ED8F4-2232-49B6-BD75-CE03FC116B0E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +22,10 @@ Global
 		{F3D2E6BA-F712-4B75-9A73-824648119D0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3D2E6BA-F712-4B75-9A73-824648119D0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3D2E6BA-F712-4B75-9A73-824648119D0F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C923D046-FC58-4A5A-8FE8-8E50F334FBA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C923D046-FC58-4A5A-8FE8-8E50F334FBA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C923D046-FC58-4A5A-8FE8-8E50F334FBA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C923D046-FC58-4A5A-8FE8-8E50F334FBA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{726ED8F4-2232-49B6-BD75-CE03FC116B0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{726ED8F4-2232-49B6-BD75-CE03FC116B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{726ED8F4-2232-49B6-BD75-CE03FC116B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{726ED8F4-2232-49B6-BD75-CE03FC116B0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
