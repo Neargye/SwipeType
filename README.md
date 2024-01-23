@@ -1,8 +1,5 @@
 # SwipeType - Implementing same algorithm "swype keyboard" for .NET and Unity
 
-[![Build status](https://ci.appveyor.com/api/projects/status/o8nxa5oeqp9y95d6/branch/master?svg=true)](https://ci.appveyor.com/project/Neargye/swipetype/branch/master)
-[![License](https://img.shields.io/github/license/Neargye/SwipeType.svg)](LICENSE)
-
 ## Example
 
 ```cs
@@ -17,3 +14,5 @@ foreach (var x in swype.GetSuggestion(testCases, 2))
     //hero
 }
 ```
+
+## Licensed under the [Apache-2.0 License](LICENSE)
