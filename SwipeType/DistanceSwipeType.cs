@@ -1,4 +1,4 @@
-// Copyright 2018 - 2024 Daniil Goncharov <neargye@gmail.com>.
+// Copyright 2018 - 2026 Daniil Goncharov <neargye@gmail.com>.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,28 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace SwipeType
 {
     /// <summary>
-    /// SwipeType using Damerau–Levenshtein distance.
+    /// Ranks words by Damerau-Levenshtein edit distance.
     /// </summary>
     public class DistanceSwipeType : SwipeType
     {
         /// <summary>
+        /// Initializes an edit-distance swipe suggestion provider.
         /// </summary>
         /// <param name="wordList">The dictionary of words.</param>
-        public DistanceSwipeType(string[] wordList) : base(wordList) { }
+        public DistanceSwipeType(IEnumerable<string> wordList) : base(wordList) { }
 
         /// <summary>
-        /// Returns suggestions for an input string.
+        /// Returns suggestions for a normalized input string.
         /// </summary>
-        /// <param name="input">Input string</param>
+        /// <param name="input">Normalized input string.</param>
         protected override IEnumerable<string> GetSuggestionImpl(string input)
         {
-            return Words.OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(input, x));
+            return WordEntries
+                .OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(input, x.NormalizedWord))
+                .ThenBy(x => x.Word, StringComparer.Ordinal)
+                .Select(x => x.Word);
         }
     }
 }

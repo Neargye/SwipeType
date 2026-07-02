@@ -1,4 +1,4 @@
-// Copyright 2018 - 2024 Daniil Goncharov <neargye@gmail.com>.
+// Copyright 2018 - 2026 Daniil Goncharov <neargye@gmail.com>.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,86 +20,48 @@ namespace SwipeTest.Tests
     public class DistanceSwipeTypeTests
     {
         [TestMethod]
-        public void SimpleSwipeTypeTest()
+        public void ConstructorThrowsForNullDictionary()
         {
-            try
-            {
-                SwipeType.SwipeType swipeType = new DistanceSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
-            }
-            catch (OutOfMemoryException e)
-            {
-                Assert.Fail($"GetSuggestionTest fail with OutOfMemoryException: {e}");
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail($"GetSuggestionTest fail with Exception: {ex}");
-            }
+            AssertThrowsArgumentNullException(() => new DistanceSwipeType(null!));
         }
 
         [TestMethod]
-        public void GetSuggestionTest()
+        public void GetSuggestionRanksClosestWordsFirst()
         {
-            try
-            {
-                SwipeType.SwipeType swipeType = new DistanceSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
-                string[] testing =
-                {
-                    "heqerqllo",
-                    "qwertyuihgfcvbnjk",
-                    "wertyuioiuytrtghjklkjhgfd",
-                    "dfghjioijhgvcftyuioiuytr",
-                    "aserfcvghjiuytedcftyuytre",
-                    "asdfgrtyuijhvcvghuiklkjuytyuytre",
-                    "mjuytfdsdftyuiuhgvc",
-                    "vghjioiuhgvcxsasdvbhuiklkjhgfdsaserty"
-                };
+            SwipeType.SwipeType swipeType = new DistanceSwipeType(new[] { "world", "Hello", "hero" });
 
-                foreach (var s in testing)
-                {
-                    var x = swipeType.GetSuggestion(s);
-                    if (x.Count() <= 0)
-                    {
-                        Assert.Fail("GetSuggestionTest fail with no match");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail($"GetSuggestionTest fail with exception: {ex}");
-            }
+            var suggestions = swipeType.GetSuggestion("hello", 3).ToArray();
+
+            CollectionAssert.AreEqual(new[] { "Hello", "hero", "world" }, suggestions);
         }
 
         [TestMethod]
-        public void GetSuggestionCountTest()
+        public void GetSuggestionWithZeroCountReturnsNoResults()
+        {
+            SwipeType.SwipeType swipeType = new DistanceSwipeType(new[] { "hello", "hero" });
+
+            Assert.AreEqual(0, swipeType.GetSuggestion("hello", 0).Count());
+        }
+
+        [TestMethod]
+        public void GetSuggestionReturnsRequestedNumberOfResults()
+        {
+            SwipeType.SwipeType swipeType = new DistanceSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
+
+            var suggestions = swipeType.GetSuggestion("heqerqllo", 3).ToArray();
+
+            Assert.AreEqual(3, suggestions.Length);
+        }
+
+        private static void AssertThrowsArgumentNullException(Action action)
         {
             try
             {
-                SwipeType.SwipeType swipeType = new DistanceSwipeType(File.ReadAllLines("EnglishDictionary.txt"));
-                string[] testing =
-                {
-                    "heqerqllo",
-                    "qwertyuihgfcvbnjk",
-                    "wertyuioiuytrtghjklkjhgfd",
-                    "dfghjioijhgvcftyuioiuytr",
-                    "aserfcvghjiuytedcftyuytre",
-                    "asdfgrtyuijhvcvghuiklkjuytyuytre",
-                    "mjuytfdsdftyuiuhgvc",
-                    "vghjioiuhgvcxsasdvbhuiklkjhgfdsaserty"
-                };
-
-                foreach (var s in testing)
-                {
-                    const int count = 3;
-                    var x = swipeType.GetSuggestion(s, count);
-                    if (x.Count() < count)
-                    {
-                        Assert.Fail("GetSuggestionTest fail with no match");
-                    }
-                }
+                action();
+                Assert.Fail("Expected ArgumentNullException.");
             }
-            catch (Exception ex)
+            catch (ArgumentNullException)
             {
-                Assert.Fail($"GetSuggestionTest fail with exception: {ex}");
             }
         }
     }

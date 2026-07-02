@@ -1,4 +1,4 @@
-// Copyright 2018 - 2024 Daniil Goncharov <neargye@gmail.com>.
+// Copyright 2018 - 2026 Daniil Goncharov <neargye@gmail.com>.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+using System;
+using System.Collections.Generic;
 
 namespace SwipeType
 {
@@ -27,91 +30,55 @@ namespace SwipeType
                 return s.Length;
             }
 
-            if (s.Length > t.Length)
-            {
-                var temp = s;
-                s = t;
-                t = temp;
-            }
-            int sLen = s.Length;
-            int tLen = t.Length;
+            int sourceLength = s.Length;
+            int targetLength = t.Length;
+            int maxDistance = sourceLength + targetLength;
+            var distances = new int[sourceLength + 2, targetLength + 2];
+            var lastSourceRows = new Dictionary<char, int>();
 
-            while ((sLen > 0) && (s[sLen - 1] == t[tLen - 1]))
+            distances[0, 0] = maxDistance;
+            for (int i = 0; i <= sourceLength; ++i)
             {
-                --sLen;
-                --tLen;
+                distances[i + 1, 0] = maxDistance;
+                distances[i + 1, 1] = i;
+            }
+            for (int j = 0; j <= targetLength; ++j)
+            {
+                distances[0, j + 1] = maxDistance;
+                distances[1, j + 1] = j;
             }
 
-            int start = 0;
-            if ((s[0] == t[0]) || (sLen == 0))
+            for (int i = 1; i <= sourceLength; ++i)
             {
-                while ((start < sLen) && (s[start] == t[start]))
+                int lastTargetMatchColumn = 0;
+
+                for (int j = 1; j <= targetLength; ++j)
                 {
-                    ++start;
-                }
-                sLen -= start;
-                tLen -= start;
+                    int lastSourceMatchRow = lastSourceRows.TryGetValue(t[j - 1], out int row) ? row : 0;
+                    int substitutionCost = 1;
+                    if (s[i - 1] == t[j - 1])
+                    {
+                        substitutionCost = 0;
+                        lastTargetMatchColumn = j;
+                    }
 
-                if (sLen == 0)
-                {
-                    return tLen;
+                    int substitution = distances[i, j] + substitutionCost;
+                    int insertion = distances[i + 1, j] + 1;
+                    int deletion = distances[i, j + 1] + 1;
+                    int transposition = distances[lastSourceMatchRow, lastTargetMatchColumn]
+                        + (i - lastSourceMatchRow - 1)
+                        + 1
+                        + (j - lastTargetMatchColumn - 1);
+
+                    distances[i + 1, j + 1] = Math.Min(
+                        Math.Min(substitution, insertion),
+                        Math.Min(deletion, transposition));
                 }
 
-                t = t.Substring(start, tLen);
+                lastSourceRows[s[i - 1]] = i;
             }
 
-            var v0 = new int[tLen];
-            var v2 = new int[tLen];
-            for (int j = 0; j < tLen; ++j)
-            {
-                v0[j] = j + 1;
-            }
-
-            char sChar = s[0];
-            int current = 0;
-            for (int i = 0; i < sLen; ++i)
-            {
-                char prevsChar = sChar;
-                sChar = s[start + i];
-                char tChar = t[0];
-                int left = i;
-                current = i + 1;
-                int nextTransCost = 0;
-                for (int j = 0; j < tLen; ++j)
-                {
-                    int above = current;
-                    int thisTransCost = nextTransCost;
-                    nextTransCost = v2[j];
-                    v2[j] = current = left;
-                    left = v0[j];
-                    char prevtChar = tChar;
-                    tChar = t[j];
-                    if (sChar == tChar)
-                    {
-                        continue;
-                    }
-                    if (left < current)
-                    {
-                        current = left;
-                    }
-                    if (above < current)
-                    {
-                        current = above;
-                    }
-                    ++current;
-                    if ((i != 0) && (j != 0) && (sChar == prevtChar) && (prevsChar == tChar))
-                    {
-                        ++thisTransCost;
-                        if (thisTransCost < current)
-                        {
-                            current = thisTransCost;
-                        }
-                    }
-                    v0[j] = current;
-                }
-            }
-
-            return current;
+            return distances[sourceLength + 1, targetLength + 1];
         }
     }
 }

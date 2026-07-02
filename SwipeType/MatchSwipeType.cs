@@ -1,4 +1,4 @@
-// Copyright 2018 - 2024 Daniil Goncharov <neargye@gmail.com>.
+// Copyright 2018 - 2026 Daniil Goncharov <neargye@gmail.com>.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,10 +20,12 @@ using System.Text;
 namespace SwipeType
 {
     /// <summary>
-    /// MatchSwipeType.
+    /// Ranks words by strict ordered path matching.
     /// </summary>
     public class MatchSwipeType : SwipeType
     {
+        private readonly Dictionary<int, WordEntry[]> candidatesByEndpoint;
+
         /// <summary>
         /// Keyboard layout.
         /// </summary>
@@ -34,25 +37,43 @@ namespace SwipeType
         };
 
         /// <summary>
+        /// Initializes a strict path-matching swipe suggestion provider.
         /// </summary>
         /// <param name="wordList">The dictionary of words.</param>
-        public MatchSwipeType(string[] wordList) : base(wordList) { }
-
-        /// <summary>
-        /// Returns suggestions for an input string.
-        /// </summary>
-        /// <param name="input">Input string</param>
-        protected override IEnumerable<string> GetSuggestionImpl(string input)
+        public MatchSwipeType(IEnumerable<string> wordList) : base(wordList)
         {
-            return Words
-                   .Where(x => !string.IsNullOrEmpty(x) && x.First() == input.First() && x.Last() == input.Last())
-                   .Where(x => Match(input, x))
-                   .Where(x => x.Length > GetMinimumWordlength(input))
-                   .OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(input, x));
+            candidatesByEndpoint = WordEntries
+                .GroupBy(x => GetEndpointKey(x.NormalizedWord[0], x.NormalizedWord[x.NormalizedWord.Length - 1]))
+                .ToDictionary(x => x.Key, x => x.ToArray());
         }
 
         /// <summary>
-        /// Checks if a letter is present in a path or not.
+        /// Returns suggestions for a normalized input string.
+        /// </summary>
+        /// <param name="input">Normalized input string.</param>
+        protected override IEnumerable<string> GetSuggestionImpl(string input)
+        {
+            int minimumWordLength = GetMinimumWordLength(input);
+            if (!candidatesByEndpoint.TryGetValue(GetEndpointKey(input[0], input[input.Length - 1]), out var candidates))
+            {
+                return Enumerable.Empty<string>();
+            }
+
+            return candidates
+                .Where(x => x.NormalizedWord.Length > minimumWordLength)
+                .Where(x => Match(input, x.NormalizedWord))
+                .OrderBy(x => TextDistance.GetDamerauLevenshteinDistance(input, x.NormalizedWord))
+                .ThenBy(x => x.Word, StringComparer.Ordinal)
+                .Select(x => x.Word);
+        }
+
+        private static int GetEndpointKey(char first, char last)
+        {
+            return (first << 16) | last;
+        }
+
+        /// <summary>
+        /// Checks whether all word letters appear in the swipe path in order.
         /// </summary>
         private static bool Match(string path, string word)
         {
@@ -117,10 +138,9 @@ namespace SwipeType
 
         /// <summary>
         /// Returns the minimum possible word length from the path.
-        /// Uses the number of transitions from different rows in
-        /// the keyboard layout to determin the minimum length.
+        /// Uses the number of transitions from different rows in the keyboard layout to determine the minimum length.
         /// </summary>
-        private static int GetMinimumWordlength(string path)
+        private static int GetMinimumWordLength(string path)
         {
             var rowNumbers = new StringBuilder();
             foreach (char inChar in path)
@@ -132,7 +152,7 @@ namespace SwipeType
                 }
             }
 
-            return Compress(rowNumbers).Length - 3;
+            return Math.Max(0, Compress(rowNumbers).Length - 3);
         }
     }
 }

@@ -3,13 +3,18 @@
     <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>SwipeType.Example.Program</StartupObject>
     <AssemblyTitle>SwipeType.Example</AssemblyTitle>
+    <Authors>Daniil Goncharov</Authors>
     <Company>Daniil Goncharov</Company>
     <Product>SwipeType.Example</Product>
-    <Copyright>Copyright © Daniil Goncharov 2018 - 2024</Copyright>
+    <Description>Console example for the SwipeType library.</Description>
+    <Copyright>Copyright © Daniil Goncharov 2018 - 2026</Copyright>
+    <Version>0.1.4</Version>
     <AssemblyVersion>0.1.4</AssemblyVersion>
     <FileVersion>0.1.4</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
