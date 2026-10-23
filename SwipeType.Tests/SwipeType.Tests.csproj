@@ -24,8 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="EnglishDictionary.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="..\data\EnglishDictionary.txt" Link="EnglishDictionary.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\data\SwipePaths.tsv" Link="SwipePaths.tsv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

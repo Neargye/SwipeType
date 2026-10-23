@@ -6,7 +6,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwipeType", "SwipeType\Swip
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwipeType.Example", "SwipeType.Example\SwipeType.Example.csproj", "{F3D2E6BA-F712-4B75-9A73-824648119D0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwipeTest.Tests", "SwipeTest.Tests\SwipeTest.Tests.csproj", "{726ED8F4-2232-49B6-BD75-CE03FC116B0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwipeType.Tests", "SwipeType.Tests\SwipeType.Tests.csproj", "{726ED8F4-2232-49B6-BD75-CE03FC116B0E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

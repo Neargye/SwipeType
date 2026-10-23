@@ -19,66 +19,167 @@ namespace SwipeType
 {
     internal static class TextDistance
     {
-        internal static int GetDamerauLevenshteinDistance(this string s, string t)
+        /// <summary>
+        /// Computes the unrestricted Damerau-Levenshtein distance. Reuses distance storage and a character map,
+        /// growing only for words actually scored. One instance must not be shared between threads.
+        /// </summary>
+        internal sealed class Workspace
         {
-            if (string.IsNullOrEmpty(s))
-            {
-                return (t ?? "").Length;
-            }
-            if (string.IsNullOrEmpty(t))
-            {
-                return s.Length;
-            }
+            private const int AsciiCharacterCount = 128;
 
-            int sourceLength = s.Length;
-            int targetLength = t.Length;
-            int maxDistance = sourceLength + targetLength;
-            var distances = new int[sourceLength + 2, targetLength + 2];
-            var lastSourceRows = new Dictionary<char, int>();
+            private int[] distances = Array.Empty<int>();
+            private readonly int[] lastAsciiSourceRows = new int[AsciiCharacterCount];
+            private readonly Dictionary<char, int> lastOtherSourceRows = new Dictionary<char, int>();
+            private int stride;
 
-            distances[0, 0] = maxDistance;
-            for (int i = 0; i <= sourceLength; ++i)
+            private void EnsureCapacity(int sourceLength, int targetLength)
             {
-                distances[i + 1, 0] = maxDistance;
-                distances[i + 1, 1] = i;
-            }
-            for (int j = 0; j <= targetLength; ++j)
-            {
-                distances[0, j + 1] = maxDistance;
-                distances[1, j + 1] = j;
-            }
-
-            for (int i = 1; i <= sourceLength; ++i)
-            {
-                int lastTargetMatchColumn = 0;
-
-                for (int j = 1; j <= targetLength; ++j)
+                long rowCount = (long)sourceLength + 2;
+                long columnCount = (long)targetLength + 2;
+                long cellCount = rowCount * columnCount;
+                if (cellCount > int.MaxValue)
                 {
-                    int lastSourceMatchRow = lastSourceRows.TryGetValue(t[j - 1], out int row) ? row : 0;
-                    int substitutionCost = 1;
-                    if (s[i - 1] == t[j - 1])
-                    {
-                        substitutionCost = 0;
-                        lastTargetMatchColumn = j;
-                    }
-
-                    int substitution = distances[i, j] + substitutionCost;
-                    int insertion = distances[i + 1, j] + 1;
-                    int deletion = distances[i, j + 1] + 1;
-                    int transposition = distances[lastSourceMatchRow, lastTargetMatchColumn]
-                        + (i - lastSourceMatchRow - 1)
-                        + 1
-                        + (j - lastTargetMatchColumn - 1);
-
-                    distances[i + 1, j + 1] = Math.Min(
-                        Math.Min(substitution, insertion),
-                        Math.Min(deletion, transposition));
+                    throw new InsufficientMemoryException("The swipe path and a candidate word are too long to compare.");
                 }
 
-                lastSourceRows[s[i - 1]] = i;
+                stride = (int)columnCount;
+                if (cellCount > distances.Length)
+                {
+                    long capacity = Math.Max(cellCount, Math.Min(2L * distances.Length, int.MaxValue));
+                    distances = new int[(int)capacity];
+                }
             }
 
-            return distances[sourceLength + 1, targetLength + 1];
+            internal int GetDistance(string source, string target)
+            {
+                return GetDistance(source, target, int.MaxValue);
+            }
+
+            /// <summary>
+            /// Returns the exact distance when it is at most <paramref name="maxDistance"/>; otherwise returns
+            /// some value greater than <paramref name="maxDistance"/> without finishing the matrix.
+            /// </summary>
+            internal int GetDistance(string source, string target, int maxDistance)
+            {
+                if (string.IsNullOrEmpty(source))
+                {
+                    return (target ?? "").Length;
+                }
+
+                if (string.IsNullOrEmpty(target))
+                {
+                    return source.Length;
+                }
+
+                if (string.Equals(source, target, StringComparison.Ordinal))
+                {
+                    return 0;
+                }
+
+                int sourceLength = source.Length;
+                int targetLength = target.Length;
+                if (Math.Abs(sourceLength - targetLength) > maxDistance)
+                {
+                    return maxDistance + 1;
+                }
+
+                EnsureCapacity(sourceLength, targetLength);
+                int sentinel = sourceLength + targetLength;
+                Array.Clear(lastAsciiSourceRows, 0, lastAsciiSourceRows.Length);
+                lastOtherSourceRows.Clear();
+
+                SetDistance(0, 0, sentinel);
+                for (int i = 0; i <= sourceLength; ++i)
+                {
+                    SetDistance(i + 1, 0, sentinel);
+                    SetDistance(i + 1, 1, i);
+                }
+                for (int j = 0; j <= targetLength; ++j)
+                {
+                    SetDistance(0, j + 1, sentinel);
+                    SetDistance(1, j + 1, j);
+                }
+
+                for (int i = 1; i <= sourceLength; ++i)
+                {
+                    int lastTargetMatchColumn = 0;
+                    int rowMinimum = i;
+
+                    for (int j = 1; j <= targetLength; ++j)
+                    {
+                        int lastSourceMatchRow = GetLastSourceRow(target[j - 1]);
+                        int previousTargetMatchColumn = lastTargetMatchColumn;
+                        int substitutionCost = 1;
+                        if (source[i - 1] == target[j - 1])
+                        {
+                            substitutionCost = 0;
+                            lastTargetMatchColumn = j;
+                        }
+
+                        int substitution = GetDistance(i, j) + substitutionCost;
+                        int insertion = GetDistance(i + 1, j) + 1;
+                        int deletion = GetDistance(i, j + 1) + 1;
+                        int transposition = GetDistance(lastSourceMatchRow, previousTargetMatchColumn)
+                            + (i - lastSourceMatchRow - 1)
+                            + 1
+                            + (j - previousTargetMatchColumn - 1);
+
+                        int distance = Math.Min(Math.Min(substitution, insertion), Math.Min(deletion, transposition));
+                        SetDistance(i + 1, j + 1, distance);
+                        if (distance < rowMinimum)
+                        {
+                            rowMinimum = distance;
+                        }
+                    }
+
+                    // Row minimums never decrease: every cell of the next row comes from this row (substitution,
+                    // deletion), from the next row itself (insertion, starting at i + 1), or from a transposition
+                    // that costs at least as much as a cell of this row: it starts at a cell of an earlier row and
+                    // pays one per source character in between plus one for the swap, which is exactly the cost of
+                    // reaching this row from that cell by source deletions alone. So the final distance cannot drop
+                    // below this row's minimum.
+                    if (rowMinimum > maxDistance)
+                    {
+                        return maxDistance + 1;
+                    }
+
+                    SetLastSourceRow(source[i - 1], i);
+                }
+
+                return GetDistance(sourceLength + 1, targetLength + 1);
+            }
+
+            private int GetLastSourceRow(char value)
+            {
+                if (value < AsciiCharacterCount)
+                {
+                    return lastAsciiSourceRows[value];
+                }
+
+                return lastOtherSourceRows.TryGetValue(value, out int row) ? row : 0;
+            }
+
+            private void SetLastSourceRow(char value, int row)
+            {
+                if (value < AsciiCharacterCount)
+                {
+                    lastAsciiSourceRows[value] = row;
+                }
+                else
+                {
+                    lastOtherSourceRows[value] = row;
+                }
+            }
+
+            private int GetDistance(int row, int column)
+            {
+                return distances[(row * stride) + column];
+            }
+
+            private void SetDistance(int row, int column, int value)
+            {
+                distances[(row * stride) + column] = value;
+            }
         }
     }
 }

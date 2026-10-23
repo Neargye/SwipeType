@@ -12,96 +12,61 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace SwipeType.Example
 {
     internal static class Program
     {
+        private static readonly string[] SwipePaths =
+        {
+            "heqerqllo",
+            "heqerqlo",
+            "geqerqllp",
+            "qwertyuihgfcvbnjk",
+            "wertyuioiuytrtghjklkjhgfd",
+            "dfghjioijhgvcftyuioiuytr",
+            "aserfcvghjiuytedcftyuytre",
+            "asdfgrtyuijhvcvghuiklkjuytyuytre",
+            "mjuytfdsdftyuiuhgvc",
+            "vghjioiuhgvcxsasdvbhuiklkjhgfdsaserty"
+        };
+
         private static void Main()
         {
             string[] words = File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, "EnglishDictionary.txt"));
 
-            SampleUsingSwipeType("Strict path match", new MatchSwipeType(words));
-            SampleUsingSwipeType("QWERTY geometry ranking with sample frequencies", new QwertySwipeType(words, CreateSampleFrequencies()));
-            SampleUsingSwipeType("Edit-distance fallback", new DistanceSwipeType(words));
-            SampleUsingFrequencies();
-        }
-
-        private static void SampleUsingSwipeType(string title, SwipeType swipeType)
-        {
-            Console.WriteLine();
-            Console.WriteLine(title);
-            Console.WriteLine(new string('=', title.Length));
-
-            var stopwatch = new Stopwatch();
-            string[] testCases =
-            {
-                "heqerqllo",
-                "geqerqllp",
-                "qwertyuihgfcvbnjk",
-                "wertyuioiuytrtghjklkjhgfd",
-                "dfghjioijhgvcftyuioiuytr",
-                "aserfcvghjiuytedcftyuytre",
-                "asdfgrtyuijhvcvghuiklkjuytyuytre",
-                "mjuytfdsdftyuiuhgvc",
-                "vghjioiuhgvcxsasdvbhuiklkjhgfdsaserty"
-            };
-
-            foreach (var s in testCases)
-            {
-                Console.WriteLine();
-                Console.WriteLine($"Swipe path: {s}");
-
-                stopwatch.Start();
-                var result = swipeType.GetSuggestion(s, 10).ToArray();
-                stopwatch.Stop();
-                Console.WriteLine($"Match time: {stopwatch.ElapsedMilliseconds} ms");
-                stopwatch.Reset();
-
-                for (int i = 0; i < result.Length; ++i)
-                {
-                    Console.WriteLine($"{i + 1,2}. {result[i]}");
-                }
-            }
-        }
-
-        private static IReadOnlyDictionary<string, double> CreateSampleFrequencies()
-        {
-            return new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase)
+            // Recommended setup: build one suggester at startup, reuse it for every swipe, and ask for top-N only.
+            // Real applications pass frequencies from a corpus; these few values only illustrate the effect.
+            var frequencies = new Dictionary<string, double>
             {
                 ["hello"] = 10000.0,
                 ["quick"] = 9000.0,
                 ["world"] = 9000.0,
                 ["doctor"] = 8000.0,
+                ["music"] = 8000.0,
                 ["architecture"] = 5000.0,
                 ["agriculture"] = 5000.0,
-                ["music"] = 8000.0,
                 ["vocabulary"] = 4000.0
             };
+            PrintSuggestions("Geometric (QWERTY) with frequencies (recommended)", new GeometricSwipeSuggester(words, frequencies));
+            PrintSuggestions("Strict ordered path match", new StrictSwipeSuggester(words));
+            PrintSuggestions("Edit-distance fallback", new EditDistanceSwipeSuggester(words));
         }
 
-        private static void SampleUsingFrequencies()
+        private static void PrintSuggestions(string title, SwipeSuggester suggester)
         {
             Console.WriteLine();
-            Console.WriteLine("Frequency-aware QWERTY ranking");
-            Console.WriteLine("===============================");
+            Console.WriteLine(title);
+            Console.WriteLine(new string('=', title.Length));
 
-            var words = new[] { "bello", "hello", "hero" };
-            var frequencies = new Dictionary<string, double>
+            foreach (string swipePath in SwipePaths)
             {
-                ["hello"] = 1000.0,
-                ["hero"] = 50.0
-            };
-            SwipeType swipeType = new QwertySwipeType(words, frequencies);
+                long timestamp = Stopwatch.GetTimestamp();
+                IReadOnlyList<string> suggestions = suggester.GetSuggestions(swipePath, 5);
+                TimeSpan elapsed = Stopwatch.GetElapsedTime(timestamp);
 
-            foreach (var word in swipeType.GetSuggestion("gello", 3))
-            {
-                Console.WriteLine(word);
+                Console.WriteLine($"{swipePath} ({elapsed.TotalMilliseconds:F1} ms): {string.Join(", ", suggestions)}");
             }
         }
     }
