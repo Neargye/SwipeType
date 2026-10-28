@@ -21,16 +21,12 @@ using System.Linq;
 namespace SwipeType
 {
     /// <summary>
-    /// Ranks words by keyboard geometry, tolerating nearby keys and path noise. The recommended suggester for
-    /// swipe input.
+    /// Ranks words by key positions, tolerating imprecise swipes. Recommended for swipe input.
     /// </summary>
     /// <remarks>
-    /// Path characters that are not on the layout are ignored. Words whose first or last letter is not on
-    /// the layout are never suggested. Candidates are ordered by match class (exact ordered match, nearby
-    /// ordered match, other), then by geometric score including the optional frequency boost, then by
-    /// Damerau-Levenshtein distance to the path, then by ordinal spelling. In an exact ordered match the word
-    /// starts and ends with the path's first and last characters, and its letters (a doubled letter once) lie
-    /// in order on path keys at distance zero, so keys placed at the same position count as one key.
+    /// Path characters outside the layout are ignored; words containing them may be omitted.
+    /// Ordered matches with matching endpoints rank first, exact keys before nearby ones;
+    /// then come geometric score with the optional frequency boost, edit distance, and ordinal spelling.
     /// </remarks>
     public sealed class GeometricSwipeSuggester : SwipeSuggester
     {
@@ -64,9 +60,8 @@ namespace SwipeType
         /// </summary>
         /// <param name="words">The dictionary of words. Blank entries are ignored.</param>
         /// <param name="wordFrequencies">
-        /// Word frequencies, matched case-insensitively. Values must be finite and non-negative; entries for
-        /// words outside <paramref name="words"/> are ignored. A logarithmic boost is added to the geometric
-        /// score, so frequencies reorder words within one match class.
+        /// Word frequencies, matched case-insensitively. All values must be finite and non-negative.
+        /// Valid entries outside <paramref name="words"/> have no effect; ranking changes only within each match class.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="words"/> or <paramref name="wordFrequencies"/> is null.
@@ -91,9 +86,8 @@ namespace SwipeType
         /// <param name="words">The dictionary of words. Blank entries are ignored.</param>
         /// <param name="layout">Keyboard layout used for geometric scoring.</param>
         /// <param name="wordFrequencies">
-        /// Word frequencies, matched case-insensitively. Values must be finite and non-negative; entries for
-        /// words outside <paramref name="words"/> are ignored. A logarithmic boost is added to the geometric
-        /// score, so frequencies reorder words within one match class.
+        /// Word frequencies, matched case-insensitively. All values must be finite and non-negative.
+        /// Valid entries outside <paramref name="words"/> have no effect; ranking changes only within each match class.
         /// </param>
         /// <exception cref="ArgumentNullException">Any argument is null.</exception>
         /// <exception cref="ArgumentException">A frequency key is null or whitespace.</exception>
@@ -144,8 +138,7 @@ namespace SwipeType
                 ++candidateCountsByRank[orderedMatchRank];
             }
 
-            // Match classes are the primary sort key, so each class is selected separately, best class first,
-            // and only the classes needed to fill the requested count are scored.
+            // Match class outranks score; stop once the better classes fill the requested count.
             var previousAlignmentRow = new double[path.Length + 1];
             var currentAlignmentRow = new double[path.Length + 1];
             var comparer = new ScoredWordComparer(path);
@@ -178,8 +171,7 @@ namespace SwipeType
         }
 
         /// <summary>
-        /// Returns words with nearby endpoints whose length fits the path, or all words with nearby endpoints
-        /// when none fits. Counts first so the result is allocated once at its exact size.
+        /// Filters by nearby endpoints and length, falling back to endpoints alone when no length fits.
         /// </summary>
         private WordEntry[] GetCandidates(string path)
         {
@@ -312,7 +304,7 @@ namespace SwipeType
             {
                 int wordKeyIndex = GetKeyIndex(word[i - 1]);
 
-                // A swipe passes a doubled letter once, so a repeated letter may share the previous letter's path key.
+                // Repeated letters have a lower omission cost because a swipe may pass their key only once.
                 double missingLetterCost = i > 1 && word[i - 1] == word[i - 2] ? RepeatedLetterCost : MissingLetterCost;
                 current[0] = previous[0] + missingLetterCost;
                 int distanceRow = keyDistances != null && wordKeyIndex >= 0 ? wordKeyIndex * layout.Count : -1;
@@ -512,9 +504,7 @@ namespace SwipeType
         }
 
         /// <summary>
-        /// Orders candidates by match class, geometric score, edit distance, and spelling.
-        /// The edit distance is computed lazily because it only breaks exact score ties.
-        /// One instance belongs to one query: it owns a mutable distance workspace.
+        /// Computes edit distance only to break score ties. Keep one comparer per query: its workspace is mutable.
         /// </summary>
         private sealed class ScoredWordComparer : IComparer<ScoredWord>
         {

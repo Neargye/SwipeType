@@ -21,13 +21,10 @@ using System.Linq;
 namespace SwipeType
 {
     /// <summary>
-    /// Ranks every dictionary word by Damerau-Levenshtein edit distance to the swipe path.
-    /// A keyboard-independent fallback.
+    /// Ranks words by Damerau-Levenshtein distance without a keyboard layout.
     /// </summary>
     /// <remarks>
-    /// Words are ranked by edit distance, then by frequency, then by ordinal spelling. Every word is a
-    /// candidate, so a query may inspect the whole dictionary; words whose length alone rules them out of
-    /// the requested top results are skipped.
+    /// Ties are resolved by frequency, then ordinal spelling. Queries may scan the whole dictionary.
     /// </remarks>
     public sealed class EditDistanceSwipeSuggester : SwipeSuggester
     {
@@ -47,7 +44,7 @@ namespace SwipeType
         /// <param name="words">The dictionary of words. Blank entries are ignored.</param>
         /// <param name="wordFrequencies">
         /// Word frequencies, matched case-insensitively, that order words with equal edit distance.
-        /// Values must be finite and non-negative; entries for words outside <paramref name="words"/> are ignored.
+        /// All values must be finite and non-negative; valid entries outside <paramref name="words"/> do not affect ranking.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="words"/> or <paramref name="wordFrequencies"/> is null.
@@ -90,8 +87,7 @@ namespace SwipeType
 
                 foreach (WordEntry wordEntry in lengthBuckets[bucketIndex].Words)
                 {
-                    // Once the buffer is full, a word farther than the current worst cannot enter it,
-                    // so the distance only needs to be exact up to that bound.
+                    // Distances beyond the worst result need not be exact; ties still matter.
                     int maxDistance = top.IsFull ? top.Worst.Distance : int.MaxValue;
                     top.Add(new EditDistanceCandidate(wordEntry.Word, workspace.GetDistance(path, wordEntry.NormalizedWord, maxDistance), wordEntry.Frequency));
                 }

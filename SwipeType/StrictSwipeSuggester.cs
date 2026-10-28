@@ -25,9 +25,8 @@ namespace SwipeType
     /// and last letters as the path. A doubled letter needs to appear in the path only once.
     /// </summary>
     /// <remarks>
-    /// Words that pass the filter are ranked by Damerau-Levenshtein distance to the path, then by frequency,
-    /// then by ordinal spelling. The layout rows only bound the shortest possible word; path characters are
-    /// compared exactly.
+    /// Matching words are ranked by Damerau-Levenshtein distance to the path, then by frequency, then by
+    /// ordinal spelling. Letters must match after case normalization; layout rows provide a heuristic length filter.
     /// </remarks>
     public sealed class StrictSwipeSuggester : SwipeSuggester
     {
@@ -43,13 +42,12 @@ namespace SwipeType
             : this(words, KeyboardLayout.Qwerty, NoFrequencies) { }
 
         /// <summary>
-        /// Initializes a strict suggester for the English QWERTY layout
-        /// with word frequencies.
+        /// Initializes a strict suggester for English QWERTY with word frequencies.
         /// </summary>
         /// <param name="words">The dictionary of words. Blank entries are ignored.</param>
         /// <param name="wordFrequencies">
         /// Word frequencies, matched case-insensitively, that order words with equal edit distance.
-        /// Values must be finite and non-negative; entries for words outside <paramref name="words"/> are ignored.
+        /// All values must be finite and non-negative; valid entries outside <paramref name="words"/> do not affect ranking.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="words"/> or <paramref name="wordFrequencies"/> is null.
@@ -63,20 +61,19 @@ namespace SwipeType
         /// Initializes a strict suggester for a custom keyboard layout.
         /// </summary>
         /// <param name="words">The dictionary of words. Blank entries are ignored.</param>
-        /// <param name="layout">Layout whose rows (<see cref="KeyboardKey.Y"/>) bound the shortest possible word.</param>
+        /// <param name="layout">Layout whose rows (<see cref="KeyboardKey.Y"/>) are used to filter candidates by length.</param>
         /// <exception cref="ArgumentNullException"><paramref name="words"/> or <paramref name="layout"/> is null.</exception>
         public StrictSwipeSuggester(IEnumerable<string> words, KeyboardLayout layout)
             : this(words, layout, NoFrequencies) { }
 
         /// <summary>
-        /// Initializes a strict suggester for a custom keyboard layout
-        /// with word frequencies.
+        /// Initializes a strict suggester for a custom layout with word frequencies.
         /// </summary>
         /// <param name="words">The dictionary of words. Blank entries are ignored.</param>
-        /// <param name="layout">Layout whose rows (<see cref="KeyboardKey.Y"/>) bound the shortest possible word.</param>
+        /// <param name="layout">Layout whose rows (<see cref="KeyboardKey.Y"/>) are used to filter candidates by length.</param>
         /// <param name="wordFrequencies">
         /// Word frequencies, matched case-insensitively, that order words with equal edit distance.
-        /// Values must be finite and non-negative; entries for words outside <paramref name="words"/> are ignored.
+        /// All values must be finite and non-negative; valid entries outside <paramref name="words"/> do not affect ranking.
         /// </param>
         /// <exception cref="ArgumentNullException">Any argument is null.</exception>
         /// <exception cref="ArgumentException">A frequency key is null or whitespace.</exception>
@@ -117,8 +114,7 @@ namespace SwipeType
         }
 
         /// <summary>
-        /// Checks whether all word letters appear in the swipe path in order. A swipe passes a doubled letter
-        /// once, so a run of equal letters needs only one path character.
+        /// Matches letters in path order, allowing repeated letters to share one path character.
         /// </summary>
         private static bool Match(string path, string word)
         {
@@ -140,8 +136,7 @@ namespace SwipeType
         }
 
         /// <summary>
-        /// Returns the minimum possible word length from the path.
-        /// Uses the number of transitions between different keyboard rows to determine the minimum length.
+        /// Estimates the minimum word length from keyboard row transitions.
         /// </summary>
         private int GetMinimumWordLength(string path)
         {

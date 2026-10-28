@@ -25,28 +25,13 @@ namespace SwipeType
     /// Base class for swipe suggesters: turns a swipe path into ranked dictionary words.
     /// </summary>
     /// <remarks>
-    /// <para>
-    /// A suggester copies and preprocesses its dictionary in the constructor and is immutable afterwards.
-    /// One instance can serve any number of concurrent <see cref="GetSuggestions(string, int)"/> calls.
-    /// </para>
-    /// <para>
-    /// The class cannot be derived from outside this library. Use it as the common type for the built-in
-    /// suggesters: <see cref="GeometricSwipeSuggester"/>, <see cref="StrictSwipeSuggester"/>, and
-    /// <see cref="EditDistanceSwipeSuggester"/>.
-    /// </para>
+    /// Instances copy the dictionary and support concurrent queries. This base class cannot be extended
+    /// outside the library.
     /// </remarks>
     public abstract class SwipeSuggester
     {
         internal static readonly IReadOnlyDictionary<string, double> NoFrequencies = new Dictionary<string, double>();
 
-        /// <summary>
-        /// Copies, normalizes, and deduplicates the dictionary and converts frequencies into ranking weights.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="words"/> or <paramref name="wordFrequencies"/> is null.
-        /// </exception>
-        /// <exception cref="ArgumentException">A frequency key is null or whitespace.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">A frequency value is negative, NaN, or infinite.</exception>
         private protected SwipeSuggester(IEnumerable<string> words, IReadOnlyDictionary<string, double> wordFrequencies)
         {
             if (words == null)
@@ -82,16 +67,17 @@ namespace SwipeType
         }
 
         /// <summary>
-        /// Gets the dictionary words this suggester can suggest: blank entries removed, surrounding whitespace
-        /// trimmed, and case-insensitive duplicates removed (the first spelling is kept).
+        /// Gets the trimmed, non-blank dictionary words, keeping the first spelling of case-insensitive duplicates.
         /// </summary>
+        /// <remarks>
+        /// A listed word can still be unreachable, for example when its letters are not on the keyboard layout.
+        /// </remarks>
         public IReadOnlyList<string> Words { get; }
 
         internal WordEntry[] WordEntries { get; }
 
         /// <summary>
-        /// Returns up to <paramref name="maxCount"/> dictionary words ranked from best to worst match
-        /// for a swipe path.
+        /// Returns up to <paramref name="maxCount"/> dictionary words, best match first.
         /// </summary>
         /// <param name="swipePath">
         /// The characters of the keys the swipe passed over, in order. Matching is case-insensitive and
@@ -101,15 +87,14 @@ namespace SwipeType
         /// The maximum number of suggestions to return. Use <see cref="int.MaxValue"/> for the full ranking.
         /// </param>
         /// <returns>
-        /// At most <paramref name="maxCount"/> words from <see cref="Words"/>; empty when the path is blank,
-        /// <paramref name="maxCount"/> is zero, or no word is a candidate. For the same path, a smaller
-        /// <paramref name="maxCount"/> always returns a prefix of the result for a larger one.
+        /// Empty when the path is blank, the count is zero, or no candidates remain.
+        /// Reducing the count preserves the order of the remaining results.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="swipePath"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxCount"/> is negative.</exception>
         /// <exception cref="InsufficientMemoryException">
-        /// The path and a candidate word are too long to compare by edit distance, which needs
-        /// (path length + 2) × (word length + 2) cells of memory; the limit is <see cref="int.MaxValue"/> cells.
+        /// The path and a candidate word are too long to compare. <see cref="GeometricSwipeSuggester"/> may wrap it in an
+        /// <see cref="InvalidOperationException"/>.
         /// </exception>
         public IReadOnlyList<string> GetSuggestions(string swipePath, int maxCount)
         {
@@ -136,17 +121,11 @@ namespace SwipeType
         /// </summary>
         private protected abstract IReadOnlyList<string> GetSuggestionsCore(string path, int maxCount);
 
-        /// <summary>
-        /// Creates a bounded candidate buffer that exposes its current worst result for safe pruning.
-        /// </summary>
         private protected TopCandidateBuffer<T> CreateTopCandidateBuffer<T>(int count, IComparer<T> comparer)
         {
             return new TopCandidateBuffer<T>(count, comparer, Math.Min(count, WordEntries.Length));
         }
 
-        /// <summary>
-        /// Normalizes a dictionary word or swipe path for lookup.
-        /// </summary>
         internal static string NormalizeWord(string value)
         {
             return value.Trim().ToLower(CultureInfo.InvariantCulture);
@@ -307,9 +286,6 @@ namespace SwipeType
             }
         }
 
-        /// <summary>
-        /// Dictionary word with its normalized lookup form and frequency.
-        /// </summary>
         internal sealed class WordEntry
         {
             internal WordEntry(string word, string normalizedWord)
@@ -328,14 +304,8 @@ namespace SwipeType
                 CollapsedLength = collapsedLength;
             }
 
-            /// <summary>
-            /// Original dictionary word.
-            /// </summary>
             internal string Word { get; }
 
-            /// <summary>
-            /// Normalized lookup form.
-            /// </summary>
             internal string NormalizedWord { get; }
 
             /// <summary>

@@ -22,8 +22,7 @@ namespace SwipeType
     internal static class TextDistance
     {
         /// <summary>
-        /// Computes the unrestricted Damerau-Levenshtein distance. Reuses distance storage and a character map,
-        /// growing only for words actually scored. One instance must not be shared between threads.
+        /// Reusable storage for unrestricted Damerau-Levenshtein distance. Not thread-safe.
         /// </summary>
         internal sealed class Workspace
         {
@@ -58,8 +57,7 @@ namespace SwipeType
             }
 
             /// <summary>
-            /// Returns the exact distance when it is at most <paramref name="maxDistance"/>; otherwise returns
-            /// some value greater than <paramref name="maxDistance"/> without finishing the matrix.
+            /// Returns the exact distance up to <paramref name="maxDistance"/>, or a value above that bound.
             /// </summary>
             internal int GetDistance(string source, string target, int maxDistance)
             {
@@ -135,12 +133,9 @@ namespace SwipeType
                         }
                     }
 
-                    // Row minimums never decrease: every cell of the next row comes from this row (substitution,
-                    // deletion), from the next row itself (insertion, starting at i + 1), or from a transposition
-                    // that costs at least as much as a cell of this row: it starts at a cell of an earlier row and
-                    // pays one per source character in between plus one for the swap, which is exactly the cost of
-                    // reaching this row from that cell by source deletions alone. So the final distance cannot drop
-                    // below this row's minimum.
+                    // Row minima cannot decrease, even through transpositions: skipping from an earlier row
+                    // costs at least as much as reaching this row by deletions. The final distance therefore
+                    // cannot fall below this minimum.
                     if (rowMinimum > maxDistance)
                     {
                         return maxDistance + 1;

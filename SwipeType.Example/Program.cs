@@ -36,8 +36,7 @@ namespace SwipeType.Example
         {
             string[] words = File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, "EnglishDictionary.txt"));
 
-            // Recommended setup: build one suggester at startup, reuse it for every swipe, and ask for top-N only.
-            // Real applications pass frequencies from a corpus; these few values only illustrate the effect.
+            // Reuse suggesters across swipes. These frequencies are illustrative; use corpus data in an app.
             var frequencies = new Dictionary<string, double>
             {
                 ["hello"] = 10000.0,
@@ -48,8 +47,8 @@ namespace SwipeType.Example
                 ["architecture"] = 5000.0,
                 ["agriculture"] = 5000.0,
                 ["vocabulary"] = 4000.0
-
             };
+
             PrintSuggestions("Geometric (QWERTY) with frequencies (recommended)", new GeometricSwipeSuggester(words, frequencies));
             PrintSuggestions("Strict ordered path match", new StrictSwipeSuggester(words));
             PrintSuggestions("Edit-distance fallback", new EditDistanceSwipeSuggester(words));

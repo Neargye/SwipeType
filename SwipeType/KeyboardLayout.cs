@@ -20,12 +20,11 @@ using System.Collections.Generic;
 namespace SwipeType
 {
     /// <summary>
-    /// An immutable keyboard layout: the positions of the keys a swipe path can pass over.
+    /// An immutable set of keyboard keys and their positions.
     /// </summary>
     /// <remarks>
     /// One unit of <see cref="KeyboardKey.X"/> is the distance between neighboring keys in a row; keys with the
-    /// same <see cref="KeyboardKey.Y"/> form a row. Key characters are matched case-insensitively. A layout is
-    /// validated once and can be shared by any number of suggesters and threads.
+    /// same <see cref="KeyboardKey.Y"/> form a row. Key characters are matched case-insensitively.
     /// </remarks>
     public sealed class KeyboardLayout
     {
@@ -86,8 +85,7 @@ namespace SwipeType
         }
 
         /// <summary>
-        /// Gets the 26-letter English QWERTY layout: rows at <c>Y</c> = 0, 1, 2 with horizontal offsets 0, 0.5,
-        /// and 1. Use its <see cref="Keys"/> as a starting point for other layouts.
+        /// Gets the 26-letter English QWERTY layout. Use its <see cref="Keys"/> to build other layouts.
         /// </summary>
         public static KeyboardLayout Qwerty { get; } = CreateQwerty();
 
@@ -99,8 +97,7 @@ namespace SwipeType
         internal int Count => keys.Length;
 
         /// <summary>
-        /// Row-major distances between keys by index, or null for large layouts, which compute them on demand
-        /// to bound the quadratic memory.
+        /// Row-major key distances; null for large layouts to avoid quadratic storage.
         /// </summary>
         internal double[]? Distances { get; }
 
