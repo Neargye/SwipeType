@@ -185,19 +185,14 @@ namespace SwipeType.Tests
                     {
                         if (value != current[index])
                         {
-                            Enqueue(
-                                current.Remove(index, 1).Insert(index, value.ToString()),
-                                distance + 1,
-                                visited,
-                                pending);
+                            Enqueue(current.Remove(index, 1).Insert(index, value.ToString()), distance + 1, visited, pending);
                         }
                     }
 
                     if (index + 1 < current.Length && current[index] != current[index + 1])
                     {
                         char[] transposed = current.ToCharArray();
-                        (transposed[index], transposed[index + 1]) =
-                            (transposed[index + 1], transposed[index]);
+                        (transposed[index], transposed[index + 1]) = (transposed[index + 1], transposed[index]);
                         Enqueue(new string(transposed), distance + 1, visited, pending);
                     }
                 }
@@ -208,11 +203,7 @@ namespace SwipeType.Tests
                     {
                         foreach (char value in alphabet)
                         {
-                            Enqueue(
-                                current.Insert(index, value.ToString()),
-                                distance + 1,
-                                visited,
-                                pending);
+                            Enqueue(current.Insert(index, value.ToString()), distance + 1, visited, pending);
                         }
                     }
                 }
@@ -221,11 +212,7 @@ namespace SwipeType.Tests
             throw new AssertFailedException($"No edit path found from '{source}' to '{target}'.");
         }
 
-        private static void Enqueue(
-            string value,
-            int distance,
-            ISet<string> visited,
-            Queue<(string Value, int Distance)> pending)
+        private static void Enqueue(string value, int distance, ISet<string> visited, Queue<(string Value, int Distance)> pending)
         {
             if (visited.Add(value))
             {

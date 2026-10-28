@@ -65,7 +65,6 @@ namespace SwipeType.Tests
         [TestMethod]
         public void DoubledLettersNeedOnlyOnePass()
         {
-            // A real swipe passes the doubled "l" of "hello" once.
             AssertInTop(new GeometricSwipeSuggester(TestData.EnglishDictionary), "heqerqlo", "hello", 3);
             CollectionAssert.AreEqual(
                 new[] { "hello", "halo" },
@@ -97,7 +96,6 @@ namespace SwipeType.Tests
         [TestMethod]
         public void ShorterWordWinsAnIdenticalPathUnlessFrequenciesSayOtherwise()
         {
-            // "to" and "too" produce the same swipe; without frequencies the word without the repeat comes first.
             var words = new[] { "too", "to" };
 
             CollectionAssert.AreEqual(new[] { "to", "too" }, new GeometricSwipeSuggester(words).GetSuggestions("tyuio", 2).ToArray());

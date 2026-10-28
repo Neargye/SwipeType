@@ -18,8 +18,7 @@ namespace SwipeType.Tests
     {
         internal const string QwertyLetters = "qwertyuiopasdfghjklzxcvbnm";
 
-        private static readonly Lazy<string[]> EnglishWords =
-            new Lazy<string[]>(() => File.ReadAllLines("EnglishDictionary.txt"));
+        private static readonly Lazy<string[]> EnglishWords = new Lazy<string[]>(() => File.ReadAllLines("EnglishDictionary.txt"));
 
         internal static string[] EnglishDictionary => EnglishWords.Value;
 
@@ -28,8 +27,7 @@ namespace SwipeType.Tests
             return CreateSuggester(kind, words, new Dictionary<string, double>());
         }
 
-        internal static SwipeSuggester CreateSuggester(
-            string kind, IEnumerable<string> words, IReadOnlyDictionary<string, double> frequencies)
+        internal static SwipeSuggester CreateSuggester(string kind, IEnumerable<string> words, IReadOnlyDictionary<string, double> frequencies)
         {
             return kind switch
             {

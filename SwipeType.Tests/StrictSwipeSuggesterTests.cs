@@ -64,7 +64,7 @@ namespace SwipeType.Tests
         [TestMethod]
         public void CustomLayoutRowsBoundTheShortestWord()
         {
-            // Every key is on its own row, so the path "abcda" crosses five rows and needs at least two letters.
+            // Five row runs in "abcda" make the heuristic reject words shorter than two letters.
             var layout = new KeyboardLayout("abcd".Select((c, row) => new KeyboardKey(c, 0.0, row)));
             var suggester = new StrictSwipeSuggester(new[] { "a", "aa", "aba", "ada" }, layout);
 

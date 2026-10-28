@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Globalization;
+
 namespace SwipeType.Tests
 {
     /// <summary>
@@ -61,6 +63,39 @@ namespace SwipeType.Tests
         }
 
         [TestMethod]
+        public void NormalizationIgnoresTheCurrentCulture()
+        {
+            CultureInfo originalCulture = CultureInfo.CurrentCulture;
+            try
+            {
+                CultureInfo.CurrentCulture = new CultureInfo("tr-TR");
+
+                Assert.AreEqual("istanbul", SwipeSuggester.NormalizeWord(" ISTANBUL "));
+            }
+            finally
+            {
+                CultureInfo.CurrentCulture = originalCulture;
+            }
+        }
+
+        [TestMethod]
+        [DataRow(nameof(StrictSwipeSuggester))]
+        [DataRow(nameof(EditDistanceSwipeSuggester))]
+        public void FrequencyKeysThatDifferOnlyInCaseUseTheLargestValue(string kind)
+        {
+            // "haello" is one edit from both words, so frequency decides; without it "hallo" sorts first.
+            var lowFirst = new Dictionary<string, double> { ["hello"] = 1, ["HELLO"] = 1000, ["hallo"] = 500 };
+            var highFirst = new Dictionary<string, double> { ["HELLO"] = 1000, ["hello"] = 1, ["hallo"] = 500 };
+
+            foreach (var frequencies in new[] { lowFirst, highFirst })
+            {
+                SwipeSuggester suggester = TestData.CreateSuggester(kind, new[] { "hallo", "hello" }, frequencies);
+
+                CollectionAssert.AreEqual(new[] { "hello", "hallo" }, suggester.GetSuggestions("haello", 2).ToArray());
+            }
+        }
+
+        [TestMethod]
         [DataRow(nameof(GeometricSwipeSuggester))]
         [DataRow(nameof(StrictSwipeSuggester))]
         [DataRow(nameof(EditDistanceSwipeSuggester))]
@@ -101,7 +136,7 @@ namespace SwipeType.Tests
 
             for (int iteration = 0; iteration < 40; ++iteration)
             {
-                // Paths that start and end like a dictionary word exercise every match class.
+                // Matching endpoints keep candidates eligible while the random middle varies match quality.
                 string word = words[random.Next(words.Length)];
                 string path = word[0] + TestData.CreateString(random, TestData.QwertyLetters, random.Next(0, 20)) + word[^1];
                 IReadOnlyList<string> full = suggester.GetSuggestions(path, int.MaxValue);
