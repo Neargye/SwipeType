@@ -98,8 +98,8 @@ namespace SwipeType
         /// <exception cref="ArgumentNullException">Any argument is null.</exception>
         /// <exception cref="ArgumentException">A frequency key is null or whitespace.</exception>
         /// <exception cref="ArgumentOutOfRangeException">A frequency is negative, NaN, or infinite.</exception>
-        public GeometricSwipeSuggester(IEnumerable<string> words, KeyboardLayout layout,
-            IReadOnlyDictionary<string, double> wordFrequencies) : base(words, wordFrequencies)
+        public GeometricSwipeSuggester(IEnumerable<string> words, KeyboardLayout layout, IReadOnlyDictionary<string, double> wordFrequencies)
+            : base(words, wordFrequencies)
         {
             this.layout = layout ?? throw new ArgumentNullException(nameof(layout));
             nearbyKeys = layout.Distances == null ? null : CreateNearbyKeys(layout);
@@ -167,8 +167,7 @@ namespace SwipeType
                         continue;
                     }
 
-                    var scoredWord = ScoreWord(path, pathKeyIndexes, candidates[i], rank,
-                        previousAlignmentRow, currentAlignmentRow);
+                    var scoredWord = ScoreWord(path, pathKeyIndexes, candidates[i], rank, previousAlignmentRow, currentAlignmentRow);
                     rankTop.Add(scoredWord);
                 }
 
@@ -284,14 +283,11 @@ namespace SwipeType
             return Math.Max(1, compressedRowLength - 3);
         }
 
-        private ScoredWord ScoreWord(string path, int[] pathKeyIndexes, WordEntry wordEntry, int orderedMatchRank,
-            double[] previousAlignmentRow, double[] currentAlignmentRow)
+        private ScoredWord ScoreWord(string path, int[] pathKeyIndexes, WordEntry wordEntry, int orderedMatchRank, double[] previousAlignmentRow, double[] currentAlignmentRow)
         {
             string word = wordEntry.NormalizedWord;
             double alignmentScore = GetAlignmentScore(pathKeyIndexes, word, previousAlignmentRow, currentAlignmentRow);
-            double endpointScore = EndpointWeight * (
-                GetKeyDistance(path[0], word[0]) +
-                GetKeyDistance(path[path.Length - 1], word[word.Length - 1]));
+            double endpointScore = EndpointWeight * (GetKeyDistance(path[0], word[0]) + GetKeyDistance(path[path.Length - 1], word[word.Length - 1]));
             double lengthScore = LengthDifferenceWeight * Math.Abs(path.Length - word.Length);
             double orderedMatchScore = -GetOrderedMatchBoost(orderedMatchRank, word.Length);
             double frequencyScore = -FrequencyWeight * wordEntry.FrequencyBoost;
@@ -300,8 +296,7 @@ namespace SwipeType
             return new ScoredWord(wordEntry.Word, word, score, orderedMatchRank);
         }
 
-        private double GetAlignmentScore(int[] pathKeyIndexes, string word,
-            double[] previousAlignmentRow, double[] currentAlignmentRow)
+        private double GetAlignmentScore(int[] pathKeyIndexes, string word, double[] previousAlignmentRow, double[] currentAlignmentRow)
         {
             double[] previous = previousAlignmentRow;
             double[] current = currentAlignmentRow;

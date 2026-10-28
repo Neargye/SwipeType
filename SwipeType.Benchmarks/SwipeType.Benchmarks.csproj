@@ -6,9 +6,11 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\SwipeType\SwipeType.csproj" />
   </ItemGroup>
+
   <ItemGroup>
     <None Include="..\data\EnglishDictionary.txt" Link="EnglishDictionary.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

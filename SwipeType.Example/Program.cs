@@ -48,6 +48,7 @@ namespace SwipeType.Example
                 ["architecture"] = 5000.0,
                 ["agriculture"] = 5000.0,
                 ["vocabulary"] = 4000.0
+
             };
             PrintSuggestions("Geometric (QWERTY) with frequencies (recommended)", new GeometricSwipeSuggester(words, frequencies));
             PrintSuggestions("Strict ordered path match", new StrictSwipeSuggester(words));

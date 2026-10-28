@@ -81,8 +81,8 @@ namespace SwipeType
         /// <exception cref="ArgumentNullException">Any argument is null.</exception>
         /// <exception cref="ArgumentException">A frequency key is null or whitespace.</exception>
         /// <exception cref="ArgumentOutOfRangeException">A frequency is negative, NaN, or infinite.</exception>
-        public StrictSwipeSuggester(IEnumerable<string> words, KeyboardLayout layout,
-            IReadOnlyDictionary<string, double> wordFrequencies) : base(words, wordFrequencies)
+        public StrictSwipeSuggester(IEnumerable<string> words, KeyboardLayout layout, IReadOnlyDictionary<string, double> wordFrequencies)
+            : base(words, wordFrequencies)
         {
             this.layout = layout ?? throw new ArgumentNullException(nameof(layout));
             candidatesByEndpoint = WordEntries
@@ -104,8 +104,7 @@ namespace SwipeType
             {
                 if (wordEntry.NormalizedWord.Length >= minimumWordLength && Match(path, wordEntry.NormalizedWord))
                 {
-                    top.Add(new EditDistanceCandidate(
-                        wordEntry.Word, workspace.GetDistance(path, wordEntry.NormalizedWord), wordEntry.Frequency));
+                    top.Add(new EditDistanceCandidate(wordEntry.Word, workspace.GetDistance(path, wordEntry.NormalizedWord), wordEntry.Frequency));
                 }
             }
 

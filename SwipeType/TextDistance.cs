@@ -96,6 +96,7 @@ namespace SwipeType
                     SetDistance(i + 1, 0, sentinel);
                     SetDistance(i + 1, 1, i);
                 }
+
                 for (int j = 0; j <= targetLength; ++j)
                 {
                     SetDistance(0, j + 1, sentinel);

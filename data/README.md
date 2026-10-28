@@ -2,14 +2,9 @@
 
 `EnglishDictionary.txt` is shared by the example, tests, and benchmarks.
 
-The file has 109,581 non-empty entries and SHA-256
-`3BB0B0D0D27EB7AE24057459660FFB5CD13399EA3257D851CFFF54293B07CA2B`.
-It matches the 1991 SIL `wordsEn.txt` list derived from the Public Brand Software
-word list, except for the missing entry `a`.
+The file has 109,581 non-empty entries and SHA-256 `3BB0B0D0D27EB7AE24057459660FFB5CD13399EA3257D851CFFF54293B07CA2B`. It matches the 1991 SIL `wordsEn.txt` list derived from the Public Brand Software word list, except for the missing entry `a`.
 
-The preserved Public Brand Software notice contains redistribution conditions,
-so the dictionary is not covered by this repository's Apache-2.0 license.
-Replace it with a clearly licensed list before redistributing it.
+The preserved Public Brand Software notice contains redistribution conditions, so the dictionary is not covered by this repository's Apache-2.0 license. Replace it with a clearly licensed list before redistributing it.
 
 References:
 

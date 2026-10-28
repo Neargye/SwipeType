@@ -152,9 +152,7 @@ namespace SwipeType
             return value.Trim().ToLower(CultureInfo.InvariantCulture);
         }
 
-        private static void ApplyFrequencyBoosts(
-            IReadOnlyList<WordEntry> entries, HashSet<string> dictionaryWords,
-            IReadOnlyDictionary<string, double> wordFrequencies)
+        private static void ApplyFrequencyBoosts(IReadOnlyList<WordEntry> entries, HashSet<string> dictionaryWords, IReadOnlyDictionary<string, double> wordFrequencies)
         {
             var frequencies = new Dictionary<string, double>(StringComparer.Ordinal);
             double maxFrequency = 0.0;
@@ -168,8 +166,7 @@ namespace SwipeType
                 double frequency = pair.Value;
                 if (double.IsNaN(frequency) || double.IsInfinity(frequency) || frequency < 0.0)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(wordFrequencies), frequency,
-                        $"Frequency for '{pair.Key}' must be finite and zero or greater.");
+                    throw new ArgumentOutOfRangeException(nameof(wordFrequencies), frequency, $"Frequency for '{pair.Key}' must be finite and zero or greater.");
                 }
 
                 if (frequency == 0.0)

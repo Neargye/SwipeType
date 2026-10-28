@@ -43,8 +43,7 @@ namespace SwipeType.Benchmarks
             Console.WriteLine(
                 $"SwipeType benchmark | .NET {Environment.Version} | " +
                 $"{words.Length:N0} words | {cases.Length} paths | top {options.SuggestionCount}");
-            Console.WriteLine(
-                $"Warmup: {options.WarmupCount}, measured iterations: {options.IterationCount}");
+            Console.WriteLine($"Warmup: {options.WarmupCount}, measured iterations: {options.IterationCount}");
             Console.WriteLine();
 
             bool qualityGatePassed = true;
@@ -58,8 +57,7 @@ namespace SwipeType.Benchmarks
                 var constructionTimer = Stopwatch.StartNew();
                 SwipeSuggester suggester = suggesterFactory.Create(words);
                 constructionTimer.Stop();
-                long constructionAllocatedBytes =
-                    GC.GetAllocatedBytesForCurrentThread() - constructionAllocationStart;
+                long constructionAllocatedBytes = GC.GetAllocatedBytesForCurrentThread() - constructionAllocationStart;
 
                 var result = MeasureQueries(suggester, cases, options);
                 var quality = MeasureQuality(suggester, cases, options.SuggestionCount);
@@ -72,8 +70,7 @@ namespace SwipeType.Benchmarks
                     $"  queries:   median {result.MedianMilliseconds,8:F2} ms, " +
                     $"p95 {result.Percentile95Milliseconds,8:F2} ms, " +
                     $"{result.QueriesPerSecond,8:F2} queries/s");
-                Console.WriteLine(
-                    $"  allocated: {ToKibibytes(result.AllocatedBytesPerQuery),8:F2} KiB/query");
+                Console.WriteLine($"  allocated: {ToKibibytes(result.AllocatedBytesPerQuery),8:F2} KiB/query");
                 Console.WriteLine(
                     $"  quality:   R@1 {quality.HitsAt1}/{cases.Length}, " +
                     $"R@3 {quality.HitsAt3}/{cases.Length}, " +
@@ -86,8 +83,7 @@ namespace SwipeType.Benchmarks
                         $"{quality.HitsAtRequestedCount}/{cases.Length}");
                 }
 
-                if (suggesterFactory.Name == "Geometric" &&
-                    quality.HitsAtRequestedCount != cases.Length)
+                if (suggesterFactory.Name == "Geometric" && quality.HitsAtRequestedCount != cases.Length)
                 {
                     qualityGatePassed = false;
                 }
@@ -119,10 +115,8 @@ namespace SwipeType.Benchmarks
                 {
                     long allocationStart = GC.GetAllocatedBytesForCurrentThread();
                     long timestamp = Stopwatch.GetTimestamp();
-                    IReadOnlyList<string> suggestions = suggester
-                        .GetSuggestions(benchmarkCase.SwipePath, options.SuggestionCount);
-                    elapsedMilliseconds[sampleIndex++] =
-                        Stopwatch.GetElapsedTime(timestamp).TotalMilliseconds;
+                    IReadOnlyList<string> suggestions = suggester.GetSuggestions(benchmarkCase.SwipePath, options.SuggestionCount);
+                    elapsedMilliseconds[sampleIndex++] = Stopwatch.GetElapsedTime(timestamp).TotalMilliseconds;
                     allocatedBytes += GC.GetAllocatedBytesForCurrentThread() - allocationStart;
 
                     checksum += suggestions.Count;
@@ -227,9 +221,7 @@ namespace SwipeType.Benchmarks
                 }
 
                 string[] columns = line.Split('\t');
-                if (columns.Length != 2 ||
-                    string.IsNullOrWhiteSpace(columns[0]) ||
-                    string.IsNullOrWhiteSpace(columns[1]))
+                if (columns.Length != 2 || string.IsNullOrWhiteSpace(columns[0]) || string.IsNullOrWhiteSpace(columns[1]))
                 {
                     throw new InvalidDataException($"Invalid benchmark case: '{line}'.");
                 }
@@ -256,9 +248,7 @@ namespace SwipeType.Benchmarks
                     return false;
                 }
 
-                if (i + 1 >= args.Length ||
-                    !int.TryParse(args[++i], out int value) ||
-                    value < 0)
+                if (i + 1 >= args.Length || !int.TryParse(args[++i], out int value) || value < 0)
                 {
                     options = default;
                     return false;
@@ -312,11 +302,9 @@ namespace SwipeType.Benchmarks
 
         private readonly record struct BenchmarkCase(string ExpectedWord, string SwipePath);
 
-        private readonly record struct BenchmarkResult(double MedianMilliseconds, double Percentile95Milliseconds,
-            double QueriesPerSecond, double AllocatedBytesPerQuery);
+        private readonly record struct BenchmarkResult(double MedianMilliseconds, double Percentile95Milliseconds, double QueriesPerSecond, double AllocatedBytesPerQuery);
 
-        private readonly record struct QualityResult(int HitsAt1, int HitsAt3, int HitsAt5, int HitsAtRequestedCount,
-            double MeanReciprocalRank, int Depth);
+        private readonly record struct QualityResult(int HitsAt1, int HitsAt3, int HitsAt5, int HitsAtRequestedCount, double MeanReciprocalRank, int Depth);
 
         private sealed record SuggesterFactory(string Name, Func<IEnumerable<string>, SwipeSuggester> Create);
     }

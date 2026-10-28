@@ -93,10 +93,7 @@ namespace SwipeType
                     // Once the buffer is full, a word farther than the current worst cannot enter it,
                     // so the distance only needs to be exact up to that bound.
                     int maxDistance = top.IsFull ? top.Worst.Distance : int.MaxValue;
-                    top.Add(new EditDistanceCandidate(
-                        wordEntry.Word,
-                        workspace.GetDistance(path, wordEntry.NormalizedWord, maxDistance),
-                        wordEntry.Frequency));
+                    top.Add(new EditDistanceCandidate(wordEntry.Word, workspace.GetDistance(path, wordEntry.NormalizedWord, maxDistance), wordEntry.Frequency));
                 }
             }
 
